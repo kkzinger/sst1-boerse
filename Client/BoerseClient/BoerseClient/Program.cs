@@ -3,13 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+
 
 namespace BoerseClient
 {
     class Program
     {
+        
+
         static void Main(string[] args)
         {
+
+
+            //Customer C = new Customer("Tobi","Mayer");
+            //Customer D = new Customer("Gerold", "Katzinger");
+            //Customer E = new Customer("Hubert Alois", "O'Donnell");
+            //Customer F = new Customer("Josef \"Sepp\"", "Mayr-Huber");
+
+            foreach(Customer _customer in DataControl.Instance.LoadAllCustomers())
+            {
+                Console.WriteLine(_customer.ID);
+                Console.WriteLine(_customer.FirstName);
+                Console.WriteLine(_customer.LastName);
+            }
         }
     }
 }

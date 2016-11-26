@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Customers>
+  <Customer>
+    <CID>C-7651511a-f8b0-4f22-bd4e-9a72339030d6</CID>
+    <FirstName>Gerold</FirstName>
+    <LastName>Katzinger</LastName>
+  </Customer>
+  <Customer>
+    <CID>C-ef800ea8-2943-44a8-8e31-95b8d3f7e794</CID>
+    <FirstName>Tobi</FirstName>
+    <LastName>Mayer</LastName>
+  </Customer>
+  <Customer>
+    <CID>C-eb2529d0-489b-4887-9950-d679f1abf4e2</CID>
+    <FirstName>Hubert Alois</FirstName>
+    <LastName>O'Donnell</LastName>
+  </Customer>
+  <Customer>
+    <CID>C-398c01bb-d3f1-46f9-9907-3ff1449b0781</CID>
+    <FirstName>Josef "Sepp"</FirstName>
+    <LastName>Mayr-Huber</LastName>
+  </Customer>
+</Customers>
