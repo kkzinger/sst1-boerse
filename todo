@@ -1,0 +1,8 @@
+börse webapp - stubs für die definierten endpunkte -gerold
+börse webapp - (flask + dynamoDB auf aws) -gerold
+aktien app - depots speichern/abrufen (persistenz) -tobias
+aktien app - kunden verwaltung -tobias
+aktien app - depot anlegen/anzeigen/verwalten -tobias
+aktien app - aktien kaufen/verkaufen -tobias
+aktien app - order id (börse) tracking pro depot. tobias
+aktien app frontend (console app)-tobias
