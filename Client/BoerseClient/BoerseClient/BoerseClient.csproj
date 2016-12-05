@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Share.cs" />
+    <Compile Include="Stock.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="DataControl.cs" />
     <Compile Include="Depot.cs" />

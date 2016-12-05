@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BoerseClient
 {
-    public class Share
+    public class Stock
     {
         string id { get; set; }
 
@@ -24,7 +24,7 @@ namespace BoerseClient
 
 
        
-        public Share()
+        public Stock()
         {
            id= getUSID();
         }

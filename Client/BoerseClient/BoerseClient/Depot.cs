@@ -36,9 +36,9 @@ namespace BoerseClient
             }
         }
 
-        private List<Share> shares;
+        private List<Stock> shares;
 
-        public List<Share> Shares
+        public List<Stock> Shares
         {
             get
             {
