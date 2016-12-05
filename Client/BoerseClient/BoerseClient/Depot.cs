@@ -8,17 +8,13 @@ namespace BoerseClient
 {
     public class Depot
     {
-        string id { get; set; }
+        private string id { get; set; }
 
         public string ID
         {
             get
             {
                 return id;
-            }
-            set
-            {
-                id = value;
             }
         }
 
@@ -30,36 +26,49 @@ namespace BoerseClient
             {
                 return owner;
             }
-            set
-            {
-                owner = value;
-            }
         }
 
-        private List<Stock> shares;
+        private List<Stock> stocks = new List<Stock>();
 
-        public List<Stock> Shares
+        public List<Stock> Stocks
         {
             get
             {
-                return shares;
-            }
-            set
-            {
-                shares = value;
+                return stocks;
             }
         }
 
+        public void AddStock(Stock _stock)
+        {
+            this.stocks.Add(_stock);
+            DataControl.Instance.SaveDepot(this);
+            
+        }
 
-        public Depot()
+        public void AddStocks(List<Stock> _stocks)
+        {
+            foreach (Stock s in _stocks)
+            {
+                this.stocks.Add(s);
+            }
+            DataControl.Instance.SaveDepot(this);
+
+        }
+
+
+        public Depot(Customer _owner)
         {
             id = getUDID();
+            this.owner = _owner;
+
+            DataControl.Instance.SaveDepot(this);
+
         }
 
         private static string getUDID()
         {
 
-            return "D-" + Guid.NewGuid().ToString("X");
+            return "D-" + Guid.NewGuid().ToString("N");
 
         }
     }
