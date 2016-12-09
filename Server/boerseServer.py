@@ -47,13 +47,13 @@ def order():
                     return 'No orderId provided',400
 
                 elif orderId == 'id4321':
-                    return '{"timestamp": "2012-12-15 11:15:24.984000", "amount": 7, "txhistory": [[5, 100.5], [2, 120.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 100.5, "signature": "sig", "idStock": "st111", "idCustomer": "derCustomer", "id": "id4321"}',200
+                    return '{"timestamp": "2012-12-15 11:15:24.984000", "amount": 7, "txhistory": [[5, 100.5], [2, 120.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 100.5, "signature": "sig", "idStock": "st666", "idCustomer": "derCustomer", "id": "id4321"}',200
 
                 elif orderId == 'id4344':
-                    return '{"timestamp": "2012-12-15 12:15:24.984000", "amount": 15, "txhistory": [[5, 50.5], [2, 60.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 60, "signature": "sig", "idStock": "st111", "idCustomer": "derCustomer1", "id": "id4344"}]',200
+                    return '{"timestamp": "2012-12-15 12:15:24.984000", "amount": 15, "txhistory": [[5, 50.5], [2, 60.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 60, "signature": "sig", "idStock": "st666", "idCustomer": "derCustomer1", "id": "id4344"}]',200
 
                 elif orderId == '':
-                    return '{[{"timestamp": "2012-12-15 11:15:24.984000", "amount": 7, "txhistory": [[5, 100.5], [2, 120.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 100.5, "signature": "sig", "idStock": "st111", "idCustomer": "derCustomer", "id": "id4321"},{"timestamp": "2012-12-15 12:15:24.984000", "amount": 15, "txhistory": [[5, 50.5], [2, 60.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 60, "signature": "sig", "idStock": "st111", "idCustomer": "derCustomer1", "id": "id4344"}]',200
+                    return '{[{"timestamp": "2012-12-15 11:15:24.984000", "amount": 7, "txhistory": [[5, 100.5], [2, 120.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 100.5, "signature": "sig", "idStock": "st8822", "idCustomer": "derCustomer", "id": "id4321"},{"timestamp": "2012-12-15 12:15:24.984000", "amount": 15, "txhistory": [[5, 50.5], [2, 60.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 60, "signature": "sig", "idStock": "st111", "idCustomer": "derCustomer1", "id": "id4344"}]',200
 
                 else:
                     return 'Dont have this orderId in System',400
