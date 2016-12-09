@@ -1,6 +1,102 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Customers>
   <Customer>
+    <CID>C-259261f5-21b0-486b-ba48-bad81dd3d824</CID>
+    <FirstName>Josef "Sepp"</FirstName>
+    <LastName>Mayr-Huber</LastName>
+    <TimeStamp>1481311842535</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-73bc329e-55a3-42f5-b446-ebd644a9ab98</CID>
+    <FirstName>Hubert Alois</FirstName>
+    <LastName>O'Donnell</LastName>
+    <TimeStamp>1481311842534</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-6647686e-ee45-4b74-8362-f351a57bc848</CID>
+    <FirstName>Gerold</FirstName>
+    <LastName>Katzinger</LastName>
+    <TimeStamp>1481311842533</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-52d51349-3af2-412e-992e-2bfcbaaee01a</CID>
+    <FirstName>Tobi</FirstName>
+    <LastName>Mayer</LastName>
+    <TimeStamp>1481311842527</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-71f5b283-8139-4390-b05b-a3853b007dd6</CID>
+    <FirstName>Josef "Sepp"</FirstName>
+    <LastName>Mayr-Huber</LastName>
+    <TimeStamp>1481311607828</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-60cd19f4-451a-4cf7-9433-8602942aee4a</CID>
+    <FirstName>Hubert Alois</FirstName>
+    <LastName>O'Donnell</LastName>
+    <TimeStamp>1481311607827</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-58118c58-b51b-452a-b126-0170942eb9c4</CID>
+    <FirstName>Gerold</FirstName>
+    <LastName>Katzinger</LastName>
+    <TimeStamp>1481311607827</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-b45f784f-99fe-4100-8f5b-9f16357ebb64</CID>
+    <FirstName>Tobi</FirstName>
+    <LastName>Mayer</LastName>
+    <TimeStamp>1481311607820</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-bb124267-f049-4847-bbab-fddaf043e8f9</CID>
+    <FirstName>Josef "Sepp"</FirstName>
+    <LastName>Mayr-Huber</LastName>
+    <TimeStamp>1481311556745</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-2b14b3e7-873b-485c-9721-dbe251f74005</CID>
+    <FirstName>Hubert Alois</FirstName>
+    <LastName>O'Donnell</LastName>
+    <TimeStamp>1481311556744</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-7c3cbb05-476f-452f-9f03-574dfef48904</CID>
+    <FirstName>Gerold</FirstName>
+    <LastName>Katzinger</LastName>
+    <TimeStamp>1481311556743</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-9439c82c-99a6-4113-9bb3-fd2ec2476d39</CID>
+    <FirstName>Tobi</FirstName>
+    <LastName>Mayer</LastName>
+    <TimeStamp>1481311556737</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-22f340be-eb06-452f-8d7d-c79b2d3597ae</CID>
+    <FirstName>Josef "Sepp"</FirstName>
+    <LastName>Mayr-Huber</LastName>
+    <TimeStamp>1481311521925</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-e215d7a1-d3fc-48e7-8a04-e952605be88c</CID>
+    <FirstName>Hubert Alois</FirstName>
+    <LastName>O'Donnell</LastName>
+    <TimeStamp>1481311521924</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-2df24726-e41e-454c-9181-106cdcb3085d</CID>
+    <FirstName>Gerold</FirstName>
+    <LastName>Katzinger</LastName>
+    <TimeStamp>1481311521924</TimeStamp>
+  </Customer>
+  <Customer>
+    <CID>C-d011cfd0-f8d7-4009-a9f7-5e6b7b188fda</CID>
+    <FirstName>Tobi</FirstName>
+    <LastName>Mayer</LastName>
+    <TimeStamp>1481311521917</TimeStamp>
+  </Customer>
+  <Customer>
     <CID>C-797d62ff-d354-4b20-ab0b-7acb9dfd4aa5</CID>
     <FirstName>Josef "Sepp"</FirstName>
     <LastName>Mayr-Huber</LastName>
