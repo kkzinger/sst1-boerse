@@ -22,18 +22,59 @@ namespace BoerseClient
             }
         }
 
+        string name { get; set; }
 
-       
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+        double price { get; set; }
+
+        public double Price
+        {
+            get
+            {
+                return price;
+            }
+            set
+            {
+                price = value;
+            }
+        }
+
+        string idBoerse { get; set; }
+
+        public string IDBOERSE
+        {
+            get
+            {
+                return idBoerse;
+            }
+            set
+            {
+                idBoerse = value;
+            }
+        }
+
+
         public Stock()
         {
-           id= getUSID();
+           //id= getUSID();
         }
 
-        private static string getUSID()
-        {
+        //private static string getUSID()
+        //{
 
-            return "S-" + Guid.NewGuid().ToString("N");
+        //    return "S-" + Guid.NewGuid().ToString("N");
 
-        }
+        //}
     }
 }
