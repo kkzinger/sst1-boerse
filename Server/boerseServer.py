@@ -41,7 +41,7 @@ def order():
                     order['id'] = str(uuid.uuid4())
                     order['idStock'] = data['idStock']
                     order['amount'] = data['amount']
-                    order['price'] = data['price']
+                    order['price'] = str(data['price'])
                     order['type'] = data['type']
                     order['timestamp'] = str(datetime.datetime.utcnow())
                     order['idBoerse'] = idBoerse
@@ -76,7 +76,7 @@ def order():
             try:
                 orderId = request.args.get('orderId')
 
-                if orderId == None:
+                if orderId == '':
                     return 'No orderId provided',400
 
                 dynorder = dynamo.orders.get_item(id=orderId)
@@ -84,8 +84,8 @@ def order():
                 order = {}
                 order['id'] = dynorder['id']
                 order['idStock'] = dynorder['idStock']
-                order['amount'] = dynorder['amount']
-                order['price'] = dynorder['price']
+                order['amount'] = int(dynorder['amount'])
+                order['price'] = float(dynorder['price'])
                 order['type'] = dynorder['type']
                 order['timestamp'] = dynorder['timestamp']
                 order['idBoerse'] = dynorder['idBoerse']
@@ -94,10 +94,7 @@ def order():
                 order['idCustomer'] = dynorder['idCustomer']
                 order['txhistory'] = dynorder['txhistory']
 
-                return json.dumps(order)
-
-                else:
-                    return 'Dont have this orderId in System',400
+                return json.dumps(order), 200
 
             except Exception as error:
                 return 'Exception:\n{0}'.format(error),500
@@ -109,23 +106,16 @@ def order():
 @app.route('/stock', methods=['GET'])
 def stock():
     try:
-        stock = {}
-        stock1 = {}
-        stock2 = {}
-        stock['id'] = 'st8822'
-        stock['name'] = 'Mighty Inc.'
-        stock['price'] = 6900.44
-        stock['idBoerse'] = idBoerse
-        stock1['id'] = 'st7890'
-        stock1['name'] = 'Poppel Inc.'
-        stock1['price'] = 2.57
-        stock1['idBoerse'] = idBoerse
-        stock2['id'] = 'st666'
-        stock2['name'] = 'Luzifer GmbH'
-        stock2['price'] = 666.00
-        stock2['idBoerse'] = idBoerse
+        stocks = []
+        dynstocks = dynamo.stocks.scan()
+        for dynstock in dynstocks:
+            stock={}
+            stock['id'] = dynstock['id']
+            stock['name'] = dynstock['name']
+            stock['price'] = dynstock['price']
+            stock['idBoerse'] = dynstock['idBoerse']
 
-        stocks = [stock,stock1,stock2]
+            stocks.append(stock)
 
         return json.dumps(stocks),200
     except Exception as error:
