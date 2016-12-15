@@ -14,8 +14,8 @@ print(os.environ["AWS_SECRET_ACCESS_KEY"])
 app = Flask(__name__)
 # Schema definition for dynamoDB
 app.config['DYNAMO_TABLES'] = [
-	Table('orders', schema=[HashKey('id')]),
-	Table('stocks', schema=[HashKey('id')]),
+        Table('orders', schema=[HashKey('id')]),
+        Table('stocks', schema=[HashKey('id')]),
 ]
 
 # init object for handling dynamoDB
@@ -52,18 +52,18 @@ def order():
                     order['txhistory'] = txlist
 
                     dynamo.orders.put_item(data={
-		        'id': order['id'],
-			'idStock': order['idStock'],
-  			'amount': order['amount'],
+                        'id': order['id'],
+                        'idStock': order['idStock'],
+                        'amount': order['amount'],
                         'price': order['price'],
-			'type': order['type'],
-			'timestamp': order['timestamp'],
-			'idBoerse': order['idBoerse'],
-  			'signature': order['signature'],
+                        'type': order['type'],
+                        'timestamp': order['timestamp'],
+                        'idBoerse': order['idBoerse'],
+                        'signature': order['signature'],
                         'idBank': order['idBank'],
-			'idCustomer': order['idCustomer'],
-			'txhistory':  order['txhistory'],
-		    })
+                        'idCustomer': order['idCustomer'],
+                        'txhistory':  order['txhistory'],
+                    })
 
                     return json.dumps(order), 200
 
@@ -76,12 +76,12 @@ def order():
             try:
                 orderId = request.args.get('orderId')
 
-		if orderId == None:
+                if orderId == None:
                     return 'No orderId provided',400
 
-		dynorder = dynamo.orders.get_item(id=orderId)
+                dynorder = dynamo.orders.get_item(id=orderId)
 
-		order = {}
+                order = {}
                 order['id'] = dynorder['id']
                 order['idStock'] = dynorder['idStock']
                 order['amount'] = dynorder['amount']
@@ -94,7 +94,7 @@ def order():
                 order['idCustomer'] = dynorder['idCustomer']
                 order['txhistory'] = dynorder['txhistory']
 
-		return json.dumps(order)
+                return json.dumps(order)
 
                 else:
                     return 'Dont have this orderId in System',400
