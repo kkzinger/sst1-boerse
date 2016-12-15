@@ -6,7 +6,7 @@ import os
 # imports for flask-dynamo
 from boto.dynamodb2.fields import HashKey
 from boto.dynamodb2.table import Table
-from flask.ext.dynamo import Dynamo 
+from flask.ext.dynamo import Dynamo
 
 print(os.environ["AWS_ACCESS_KEY_ID"])
 print(os.environ["AWS_SECRET_ACCESS_KEY"])
@@ -50,21 +50,21 @@ def order():
                     order['idCustomer'] = data['idCustomer']
                     txlist = []
                     order['txhistory'] = txlist
-		    
+
                     dynamo.orders.put_item(data={
 		        'id': order['id'],
 			'idStock': order['idStock'],
-  			'amount': order['amount'], 
+  			'amount': order['amount'],
                         'price': order['price'],
 			'type': order['type'],
 			'timestamp': order['timestamp'],
 			'idBoerse': order['idBoerse'],
   			'signature': order['signature'],
-                        'idBank': order['idBank'], 
-			'idCustomer': order['idCustomer'], 
-			'txhistory':  order['txhistory'], 
-		    }) 	            
-	              
+                        'idBank': order['idBank'],
+			'idCustomer': order['idCustomer'],
+			'txhistory':  order['txhistory'],
+		    })
+
                     return json.dumps(order), 200
 
                 except Exception as error:
@@ -78,11 +78,11 @@ def order():
 
 		if orderId == None:
                     return 'No orderId provided',400
-		
+
 		dynorder = dynamo.orders.get_item(id=orderId)
 
 		order = {}
-                order['id'] = dynorder['id'] 
+                order['id'] = dynorder['id']
                 order['idStock'] = dynorder['idStock']
                 order['amount'] = dynorder['amount']
                 order['price'] = dynorder['price']
@@ -94,7 +94,7 @@ def order():
                 order['idCustomer'] = dynorder['idCustomer']
                 order['txhistory'] = dynorder['txhistory']
 
-		return json.dumps(order)	
+		return json.dumps(order)
 
                 else:
                     return 'Dont have this orderId in System',400
