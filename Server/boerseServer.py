@@ -1,7 +1,25 @@
 from flask import Flask, request
 import json
 import datetime
+import uuid
+import os
+# imports for flask-dynamo
+from boto.dynamodb2.fields import HashKey
+from boto.dynamodb2.table import Table
+from flask.ext.dynamo import Dynamo 
+
+print(os.environ["AWS_ACCESS_KEY_ID"])
+print(os.environ["AWS_SECRET_ACCESS_KEY"])
+
 app = Flask(__name__)
+# Schema definition for dynamoDB
+app.config['DYNAMO_TABLES'] = [
+	Table('orders', schema=[HashKey('id')]),
+	Table('stocks', schema=[HashKey('id')]),
+]
+
+# init object for handling dynamoDB
+dynamo = Dynamo(app)
 
 idBoerse = 'datBoerse'
 @app.route('/')
@@ -20,7 +38,7 @@ def order():
 
                 try:
                     order = {}
-                    order['id'] ='id4321'
+                    order['id'] = str(uuid.uuid4())
                     order['idStock'] = data['idStock']
                     order['amount'] = data['amount']
                     order['price'] = data['price']
@@ -32,7 +50,21 @@ def order():
                     order['idCustomer'] = data['idCustomer']
                     txlist = []
                     order['txhistory'] = txlist
-
+		    
+                    dynamo.orders.put_item(data={
+		        'id': order['id'],
+			'idStock': order['idStock'],
+  			'amount': order['amount'], 
+                        'price': order['price'],
+			'type': order['type'],
+			'timestamp': order['timestamp'],
+			'idBoerse': order['idBoerse'],
+  			'signature': order['signature'],
+                        'idBank': order['idBank'], 
+			'idCustomer': order['idCustomer'], 
+			'txhistory':  order['txhistory'], 
+		    }) 	            
+	              
                     return json.dumps(order), 200
 
                 except Exception as error:
@@ -43,17 +75,26 @@ def order():
         elif request.method == 'GET':
             try:
                 orderId = request.args.get('orderId')
-                if orderId == None:
+
+		if orderId == None:
                     return 'No orderId provided',400
+		
+		dynorder = dynamo.orders.get_item(id=orderId)
 
-                elif orderId == 'id4321':
-                    return '{"timestamp": "2012-12-15 11:15:24.984000", "amount": 7, "txhistory": [[5, 100.5], [2, 120.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 100.5, "signature": "sig", "idStock": "st666", "idCustomer": "derCustomer", "id": "id4321"}',200
+		order = {}
+                order['id'] = dynorder['id'] 
+                order['idStock'] = dynorder['idStock']
+                order['amount'] = dynorder['amount']
+                order['price'] = dynorder['price']
+                order['type'] = dynorder['type']
+                order['timestamp'] = dynorder['timestamp']
+                order['idBoerse'] = dynorder['idBoerse']
+                order['signature'] = dynorder['signature']
+                order['idBank'] = dynorder['idBank']
+                order['idCustomer'] = dynorder['idCustomer']
+                order['txhistory'] = dynorder['txhistory']
 
-                elif orderId == 'id4344':
-                    return '{"timestamp": "2012-12-15 12:15:24.984000", "amount": 15, "txhistory": [[5, 50.5], [2, 60.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 60, "signature": "sig", "idStock": "st666", "idCustomer": "derCustomer1", "id": "id4344"}]',200
-
-                elif orderId == '':
-                    return '{[{"timestamp": "2012-12-15 11:15:24.984000", "amount": 7, "txhistory": [[5, 100.5], [2, 120.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 100.5, "signature": "sig", "idStock": "st8822", "idCustomer": "derCustomer", "id": "id4321"},{"timestamp": "2012-12-15 12:15:24.984000", "amount": 15, "txhistory": [[5, 50.5], [2, 60.5]], "idBoerse": "datBoerse", "type": "buy", "idBank": "dieBank", "price": 60, "signature": "sig", "idStock": "st111", "idCustomer": "derCustomer1", "id": "id4344"}]',200
+		return json.dumps(order)	
 
                 else:
                     return 'Dont have this orderId in System',400
