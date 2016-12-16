@@ -28,9 +28,38 @@ namespace BoerseClient
             }
         }
 
-        private List<Stock> stocks = new List<Stock>();
 
-        public List<Stock> Stocks
+        private double worth;
+        public double Worth
+        {
+            get
+            {
+                return worth;
+            }
+
+            set
+            {
+                worth = value - value;
+            }
+        }
+
+        private List<Order> _IssuedSellOrders = new List<Order>();
+        public List<Order> IssuedSellOrders
+        {
+            get
+            {
+                return _IssuedSellOrders ;
+            }
+        }
+
+        public void AddSellOrder(Order _sellorder)
+        {
+            this._IssuedSellOrders.Add(_sellorder);
+        }
+
+        private List<KeyValuePair<Stock, int>> stocks = new List<KeyValuePair<Stock, int>>();
+
+        public List<KeyValuePair<Stock, int>> Stocks
         {
             get
             {
@@ -38,16 +67,17 @@ namespace BoerseClient
             }
         }
 
-        public void AddStock(Stock _stock)
+        public void AddStock(Stock _stock, int _amount)
         {
-            this.stocks.Add(_stock);
+
+            this.stocks.Add(new KeyValuePair<Stock, int>(_stock, _amount));
             DataControl.Instance.SaveDepot(this);
             
         }
 
-        public void AddStocks(List<Stock> _stocks)
+        public void AddStocks(List<KeyValuePair<Stock, int>> _stocks)
         {
-            foreach (Stock s in _stocks)
+            foreach ( KeyValuePair<Stock, int> s in _stocks)
             {
                 this.stocks.Add(s);
             }
@@ -60,7 +90,8 @@ namespace BoerseClient
         {
             id = getUDID();
             this.owner = _owner;
-
+            
+            this.AddStock(new Stock(), 33);
             DataControl.Instance.SaveDepot(this);
 
         }

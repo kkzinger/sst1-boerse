@@ -79,15 +79,22 @@ namespace BoerseClient
 
         public List<Customer> LoadAllCustomers()
         {
-            XDocument doc = XDocument.Load(CustomerStorage);
-            List<Customer> customers = (from xnode in doc.Element("Customers").Elements("Customer")
-                                        select new Customer()
-                                        {
-                                            ID = xnode.Element("CID").Value.ToString(),
-                                            FirstName = xnode.Element("FirstName").Value.ToString(),
-                                            LastName = xnode.Element("LastName").Value.ToString()
-                                        }).ToList();
-            return customers;
+            try
+            {
+                XDocument doc = XDocument.Load(CustomerStorage);
+                List<Customer> customers = (from xnode in doc.Element("Customers").Elements("Customer")
+                                            select new Customer()
+                                            {
+                                                ID = xnode.Element("CID").Value.ToString(),
+                                                FirstName = xnode.Element("FirstName").Value.ToString(),
+                                                LastName = xnode.Element("LastName").Value.ToString()
+                                            }).ToList();
+                return customers;
+            }
+            catch(Exception)
+            {
+                return new List<Customer>();
+            }
         }
 
         public void SaveDepot(Depot _D)
@@ -108,11 +115,15 @@ namespace BoerseClient
                     xmlWriter.WriteElementString("DID", _D.ID);
                     xmlWriter.WriteElementString("Owner", _D.Owner.ID);
                     xmlWriter.WriteStartElement("Stocks");
+                    
 
-
-                    foreach (Stock _s in _D.Stocks)
+                    foreach (KeyValuePair<Stock,int> _s in _D.Stocks)
                     {
-                        xmlWriter.WriteElementString("SID", _s.ID);
+                        xmlWriter.WriteStartElement("Stock");
+                        xmlWriter.WriteAttributeString("SID", _s.Key.ID);
+                        xmlWriter.WriteAttributeString("Amount", _s.Value.ToString());
+                        xmlWriter.WriteEndElement();
+                                          
                     }
                     
                     xmlWriter.WriteEndElement();
@@ -136,7 +147,8 @@ namespace BoerseClient
                    new XElement("DID", _D.ID),
                    new XElement("Owner", _D.Owner.ID),
                    new XElement("Stocks", 
-                   _D.Stocks.Select( stock => new XElement("SID", stock.ID) ) ),
+                   _D.Stocks.Select( stock => new XElement("kjasddkljsdafkj", stock.Key.ID) ),
+                   _D.Stocks.Select(stock => new XElement("Amount", stock.Value.ToString()))),
                    new XElement("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString())));
 
                 

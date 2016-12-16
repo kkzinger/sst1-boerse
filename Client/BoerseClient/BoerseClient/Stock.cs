@@ -67,7 +67,8 @@ namespace BoerseClient
 
         public Stock()
         {
-           //id= getUSID();
+            //id= getUSID();
+            id = this.name+" TODO: GET THE ID FROM ALLSTOCKS";
         }
 
         //private static string getUSID()

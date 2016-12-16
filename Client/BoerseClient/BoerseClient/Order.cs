@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,35 +9,198 @@ namespace BoerseClient
 {
     public class Order
     {
-        DateTimeOffset timestamp;
-        public DateTimeOffset Timestamp
+
+        public Order()
+        {
+            this._id = getUOID();
+        }
+
+        private string CalculateMD5Hash(string input)
+
+        {
+
+            // step 1, calculate MD5 hash from input
+
+            MD5 md5 = System.Security.Cryptography.MD5.Create();
+
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+
+            // step 2, convert byte array to hex string
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < hash.Length; i++)
+
+            {
+
+                sb.Append(hash[i].ToString("x2"));
+
+            }
+
+            return sb.ToString();
+
+        }
+
+
+
+        DateTimeOffset _timestamp;
+        public DateTimeOffset timestamp
         {
             get
             {
-                return timestamp;
+                return _timestamp;
             }
             set
             {
-                timestamp = value;
+                _timestamp = value;
             }
         }
 
 
-        uint amount;
-        public uint Amount
+        uint _amount;
+        public uint amount
         {
             get
             {
-                return Amount;
+                return _amount;
             }
             set
             {
-                Amount = value;
+                _amount = value;
+            }
+        }
+
+
+       double[,] _txhistory;
+       public  double[,] txhistory
+        {
+            get
+            {
+                return _txhistory;
+            }
+            set
+            {
+                _txhistory = value;
+            }
+        }
+
+
+        string _idBoerse;
+        public string idBoerse
+        {
+            get
+            {
+                return _idBoerse;
+            }
+            set
+            {
+                _idBoerse = value;
+            }
+        }
+
+
+        string _type;
+        public string type
+        {
+            get
+            {
+                return _type;
+            }
+            set
+            {
+                _type = value;
+            }
+        }
+
+
+        string _idBank;
+        public string idBank
+        {
+            get
+            {
+                return _idBank;
+            }
+            set
+            {
+                _idBank = value;
+            }
+        }
+
+        double _price;
+        public double price
+        {
+            get
+            {
+                return _price;
+            }
+            set
+            {
+                _price = value;
+            }
+        }
+
+
+        string _signature;
+        public string signature
+        {
+            get
+            {
+                return _signature;
+            }
+            set
+            {
+                _signature = CalculateMD5Hash(value);
+            }
+        }
+
+        string _idStock;
+        public string idStock
+        {
+            get
+            {
+                return _idStock;
+            }
+            set
+            {
+                _idStock = value;
             }
         }
 
 
 
+        string _idCustomer;
+        public string idCustomer
+        {
+            get
+            {
+                return _idCustomer;
+            }
+            set
+            {
+                _idCustomer = value;
+            }
+        }
+
+
+        string _id;
+        public string id
+        {
+            get
+            {
+                return _id;
+            }
+
+        }
+
+        private static string getUOID()
+        {
+
+            return "O-" + Guid.NewGuid().ToString("N");
+
+        }
 
     }
 }
