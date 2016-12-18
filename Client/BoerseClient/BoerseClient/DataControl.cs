@@ -142,16 +142,24 @@ namespace BoerseClient
                 IEnumerable<XElement> rows = root.Descendants("Depot");
                 IEnumerable<XElement> stockrows = rows.Descendants("Stocks");
                 XElement firstRow = rows.First();
+                //firstRow.AddBeforeSelf(
+                //   new XElement("Depot",
+                //   new XElement("DID", _D.ID),
+                //   new XElement("Owner", _D.Owner.ID),
+                //   new XElement("Stocks", 
+                //   _D.Stocks.Select( stock => new XElement("kjasddkljsdafkj", stock.Key.ID) ),
+                //   _D.Stocks.Select(stock => new XAttribute("Amount", stock.Value.ToString()))),
+                //   new XElement("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString())));
                 firstRow.AddBeforeSelf(
                    new XElement("Depot",
                    new XElement("DID", _D.ID),
                    new XElement("Owner", _D.Owner.ID),
-                   new XElement("Stocks", 
-                   _D.Stocks.Select( stock => new XElement("kjasddkljsdafkj", stock.Key.ID) ),
-                   _D.Stocks.Select(stock => new XElement("Amount", stock.Value.ToString()))),
+                   new XElement("Stocks",
+                   _D.Stocks.Select(stock => new XElement("Stock",
+                  new XAttribute("SID", stock.Key.ID),
+                  new XAttribute("Amount",stock.Value.ToString())))),
                    new XElement("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString())));
 
-                
 
                 xDocument.Save(DepotStorage);
             }
@@ -160,5 +168,47 @@ namespace BoerseClient
 
 
         }
+
+    public List<Depot> GetDepotsByCustomer(Customer _C)
+    {
+            try
+            {
+                List<Customer> _Customers = LoadAllCustomers();
+
+                XDocument doc = XDocument.Load(DepotStorage);
+                List<Depot> Depots = (from xnode in doc.Element("Depots").Elements("Depot")
+                                      select new Depot()
+                                      {
+                                          ID = xnode.Element("DID").Value.ToString(),
+                                          Owner = _Customers.Find(Customer => Customer.ID == xnode.Element("Owner").Value.ToString()),
+                                          Stocks =
+                                             (from xnodestock in doc.Element("Depots").Elements("Depot").Elements("Stocks").Elements("Stock")
+                                              select new KeyValuePair<Stock, int>(new Stock(xnodestock.Attribute("SID").ToString()), int.Parse(xnodestock.Attribute("Amount").ToString()))
+                                              ).ToList()
+                                      }).ToList();
+                List<Depot> DepotsByCustomer = new List<Depot>();
+                foreach(Depot d in Depots)
+                {
+                    if(d.Owner.ID == _C.ID)
+                    {
+                        DepotsByCustomer.Add(d);
+                    }
+
+                }
+
+                List<Depot> DepotsByCustomerLastEntry = new List<Depot>();
+                
+
+                return DepotsByCustomer;
+            }
+            catch (Exception)
+            {
+                return new List<Depot>();
+            }
+        }
+
+   
+
+
     }
 }

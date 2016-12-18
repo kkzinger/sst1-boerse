@@ -10,11 +10,18 @@ namespace BoerseClient
     {
         private string id { get; set; }
 
+
+
         public string ID
         {
             get
             {
                 return id;
+            }
+
+            set
+            {
+                id = value;
             }
         }
 
@@ -25,6 +32,11 @@ namespace BoerseClient
             get
             {
                 return owner;
+            }
+
+            set
+            {
+                owner = value;
             }
         }
 
@@ -65,6 +77,11 @@ namespace BoerseClient
             {
                 return stocks;
             }
+
+            set
+            {
+                stocks = value;
+            }
         }
 
         public void AddStock(Stock _stock, int _amount)
@@ -91,8 +108,13 @@ namespace BoerseClient
             id = getUDID();
             this.owner = _owner;
             
-            this.AddStock(new Stock(), 33);
+            //this.AddStock(new Stock(), 33);
             DataControl.Instance.SaveDepot(this);
+
+        }
+
+        public Depot()
+        {
 
         }
 

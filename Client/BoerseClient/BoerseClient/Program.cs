@@ -19,65 +19,65 @@ namespace BoerseClient
 
         static void Main(string[] args)
         {
-         /*   Console.WriteLine("Welchome to the Stock Deal App of dieBank!");
-            //Dummy Customers, if no customer data is present:
-            //Customer C = new Customer("Tobi", "Mayer");
-            //Customer D = new Customer("Gerold", "Katzinger");
-            //Customer E = new Customer("Hubert Alois", "O'Donnell");
-            //Customer F = new Customer("Josef \"Sepp\"", "Mayr-Huber");
-            List<Customer> Customers = DataControl.Instance.LoadAllCustomers();
-            while (Customers.Count <= 0)
-            {
-                String FirstName = "";
-                String LastName = "";
-                Console.WriteLine("No customers found, please enter First Name and Last Name to create a customer: ");
-                while(FirstName.Length<3)
-                {
-                    Console.WriteLine("Enter First Name (atleast 3 characters): ");
-                    FirstName = Console.ReadLine();
-                }
+            /*   Console.WriteLine("Welchome to the Stock Deal App of dieBank!");
+               //Dummy Customers, if no customer data is present:
+               //Customer C = new Customer("Tobi", "Mayer");
+               //Customer D = new Customer("Gerold", "Katzinger");
+               //Customer E = new Customer("Hubert Alois", "O'Donnell");
+               //Customer F = new Customer("Josef \"Sepp\"", "Mayr-Huber");
+               List<Customer> Customers = DataControl.Instance.LoadAllCustomers();
+               while (Customers.Count <= 0)
+               {
+                   String FirstName = "";
+                   String LastName = "";
+                   Console.WriteLine("No customers found, please enter First Name and Last Name to create a customer: ");
+                   while(FirstName.Length<3)
+                   {
+                       Console.WriteLine("Enter First Name (atleast 3 characters): ");
+                       FirstName = Console.ReadLine();
+                   }
 
-                while (LastName.Length < 3)
-                {
-                    Console.WriteLine("Enter Last Name (atleast 3 characters): ");
-                    LastName = Console.ReadLine();
-                }
+                   while (LastName.Length < 3)
+                   {
+                       Console.WriteLine("Enter Last Name (atleast 3 characters): ");
+                       LastName = Console.ReadLine();
+                   }
 
-                Customers.Add(new Customer(FirstName, LastName));
-            }
-           
-                Console.WriteLine("Please choose a customer from the list or create a new account: ");
+                   Customers.Add(new Customer(FirstName, LastName));
+               }
 
-                uint customercounter = 0;
-                foreach (Customer _customer in Customers)
-                {
-                    Console.WriteLine("Customer Nr.: " + (customercounter++));
-                    Console.WriteLine("Internal Customer Nr.: " + _customer.ID);
-                    Console.WriteLine("First Name: " + _customer.FirstName);
-                    Console.WriteLine("Last Name: " + _customer.LastName);
-                }
-                Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
-                string CID_str = Console.ReadLine();
+                   Console.WriteLine("Please choose a customer from the list or create a new account: ");
 
-                uint CID = 0;
+                   uint customercounter = 0;
+                   foreach (Customer _customer in Customers)
+                   {
+                       Console.WriteLine("Customer Nr.: " + (customercounter++));
+                       Console.WriteLine("Internal Customer Nr.: " + _customer.ID);
+                       Console.WriteLine("First Name: " + _customer.FirstName);
+                       Console.WriteLine("Last Name: " + _customer.LastName);
+                   }
+                   Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
+                   string CID_str = Console.ReadLine();
+
+                   uint CID = 0;
 
 
 
-                while ((!uint.TryParse(CID_str, out CID)) || (CID < 0) || (CID > customercounter))
-                {
-                    Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
-                    CID_str = Console.ReadLine();
+                   while ((!uint.TryParse(CID_str, out CID)) || (CID < 0) || (CID > customercounter))
+                   {
+                       Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
+                       CID_str = Console.ReadLine();
 
-                }
-                CID = uint.Parse(CID_str);
-                Console.WriteLine("Chosen Customer: ");
-                Customer CC = DataControl.Instance.LoadAllCustomers()[(int)CID];
-                Console.WriteLine("Customer Nr.: " + CID);
-                Console.WriteLine("Internal Customer Nr.: " + CC.ID);
-                Console.WriteLine("First Name: " + CC.FirstName);
-                Console.WriteLine("Last Name: " + CC.LastName);*/
-            
-            
+                   }
+                   CID = uint.Parse(CID_str);
+                   Console.WriteLine("Chosen Customer: ");
+                   Customer CC = DataControl.Instance.LoadAllCustomers()[(int)CID];
+                   Console.WriteLine("Customer Nr.: " + CID);
+                   Console.WriteLine("Internal Customer Nr.: " + CC.ID);
+                   Console.WriteLine("First Name: " + CC.FirstName);
+                   Console.WriteLine("Last Name: " + CC.LastName);*/
+
+
 
             Stock S1 = new Stock();
             S1.Name = "S1";
@@ -87,7 +87,7 @@ namespace BoerseClient
             //Stock S4 = new Stock();
             Customer E = DataControl.Instance.LoadAllCustomers()[0];
             Depot Depot = new Depot(E);
-            Depot.AddStock(S2,2);
+            Depot.AddStock(S2, 2);
             Depot.AddStock(S1, 1);
             //Depot Depot2 = new Depot(F);
             //List<Stock> stockstoadd = new List<Stock>();
