@@ -88,7 +88,10 @@ namespace BoerseClient
         {
 
             this.stocks.Add(new KeyValuePair<Stock, int>(_stock, _amount));
-            DataControl.Instance.SaveDepot(this);
+            List<KeyValuePair<Stock, int>> StockList = new List<KeyValuePair<Stock, int>>();
+            KeyValuePair<Stock, int> KVP = new KeyValuePair<Stock, int>(_stock, _amount);
+            StockList.Add(KVP);
+            DataControl.Instance.SaveStocksToDepot(this, StockList);
             
         }
 
@@ -98,7 +101,7 @@ namespace BoerseClient
             {
                 this.stocks.Add(s);
             }
-            DataControl.Instance.SaveDepot(this);
+            DataControl.Instance.SaveStocksToDepot(this, _stocks);
 
         }
 

@@ -19,82 +19,167 @@ namespace BoerseClient
 
         static void Main(string[] args)
         {
-            /*   Console.WriteLine("Welchome to the Stock Deal App of dieBank!");
-               //Dummy Customers, if no customer data is present:
-               //Customer C = new Customer("Tobi", "Mayer");
-               //Customer D = new Customer("Gerold", "Katzinger");
-               //Customer E = new Customer("Hubert Alois", "O'Donnell");
-               //Customer F = new Customer("Josef \"Sepp\"", "Mayr-Huber");
-               List<Customer> Customers = DataControl.Instance.LoadAllCustomers();
-               while (Customers.Count <= 0)
-               {
-                   String FirstName = "";
-                   String LastName = "";
-                   Console.WriteLine("No customers found, please enter First Name and Last Name to create a customer: ");
-                   while(FirstName.Length<3)
-                   {
-                       Console.WriteLine("Enter First Name (atleast 3 characters): ");
-                       FirstName = Console.ReadLine();
-                   }
+            while (true)
+            {
+                Console.WriteLine("Welcome to the Stock Deal App of dieBank!");
 
-                   while (LastName.Length < 3)
-                   {
-                       Console.WriteLine("Enter Last Name (atleast 3 characters): ");
-                       LastName = Console.ReadLine();
-                   }
+                List<Customer> Customers = DataControl.Instance.LoadAllCustomers();
+                while (Customers.Count <= 0)
+                {
+                    String FirstName = "";
+                    String LastName = "";
+                    Console.WriteLine("No customers found, please enter First Name and Last Name to create a customer: ");
+                    while (FirstName.Length < 3)
+                    {
+                        Console.WriteLine("Enter First Name (atleast 3 characters): ");
+                        FirstName = Console.ReadLine();
+                    }
 
-                   Customers.Add(new Customer(FirstName, LastName));
-               }
+                    while (LastName.Length < 3)
+                    {
+                        Console.WriteLine("Enter Last Name (atleast 3 characters): ");
+                        LastName = Console.ReadLine();
+                    }
 
-                   Console.WriteLine("Please choose a customer from the list or create a new account: ");
+                    Customers.Add(new Customer(FirstName, LastName));
+                }
 
-                   uint customercounter = 0;
-                   foreach (Customer _customer in Customers)
-                   {
-                       Console.WriteLine("Customer Nr.: " + (customercounter++));
-                       Console.WriteLine("Internal Customer Nr.: " + _customer.ID);
-                       Console.WriteLine("First Name: " + _customer.FirstName);
-                       Console.WriteLine("Last Name: " + _customer.LastName);
-                   }
-                   Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
-                   string CID_str = Console.ReadLine();
+                Console.WriteLine("Please choose a customer from the list or create a new customer: ");
 
-                   uint CID = 0;
+                uint customercounter = 0;
+                foreach (Customer _customer in Customers)
+                {
+                    Console.WriteLine("Customer Nr.: " + (customercounter++));
+                    Console.WriteLine("Internal Customer Nr.: " + _customer.ID);
+                    Console.WriteLine("First Name: " + _customer.FirstName);
+                    Console.WriteLine("Last Name: " + _customer.LastName);
+                }
+                Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
+                string CID_str = Console.ReadLine();
+
+                uint CID = 0;
 
 
 
-                   while ((!uint.TryParse(CID_str, out CID)) || (CID < 0) || (CID > customercounter))
-                   {
-                       Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
-                       CID_str = Console.ReadLine();
+                while ((!uint.TryParse(CID_str, out CID)) || (CID < 0) || (CID > customercounter))
+                {
+                    Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
+                    CID_str = Console.ReadLine();
 
-                   }
-                   CID = uint.Parse(CID_str);
-                   Console.WriteLine("Chosen Customer: ");
-                   Customer CC = DataControl.Instance.LoadAllCustomers()[(int)CID];
-                   Console.WriteLine("Customer Nr.: " + CID);
-                   Console.WriteLine("Internal Customer Nr.: " + CC.ID);
-                   Console.WriteLine("First Name: " + CC.FirstName);
-                   Console.WriteLine("Last Name: " + CC.LastName);*/
+                }
+                CID = uint.Parse(CID_str);
+                Console.WriteLine("Chosen Customer: ");
+                Customer CC = DataControl.Instance.LoadAllCustomers()[(int)CID];
+                Console.WriteLine("Customer Nr.: " + CID);
+                Console.WriteLine("Internal Customer Nr.: " + CC.ID);
+                Console.WriteLine("First Name: " + CC.FirstName);
+                Console.WriteLine("Last Name: " + CC.LastName);
 
+                List<Depot> DepotsOfCustomers = DataControl.Instance.GetDepotsByCustomer(CC);
 
+                if (DepotsOfCustomers.Count > 0)
+                {
+                    Console.WriteLine("Depots: ");
+                    foreach (Depot _D in DepotsOfCustomers)
+                    {
+                        Console.WriteLine("--------------------------------------");
+                        Console.WriteLine(_D.ID);
+                        Console.WriteLine(_D.Owner);
+                        foreach (KeyValuePair<Stock, int> _S in _D.Stocks)
+                        {
+                            Console.WriteLine(_S.Key.ID + " (" + _S.Value.ToString() + ")");
+                        }
+                        Console.WriteLine("--------------------------------------");
 
-            Stock S1 = new Stock();
-            S1.Name = "S1";
-            Stock S2 = new Stock();
-            S2.Name = "S2";
+                    }
+                    Console.WriteLine("TODO: CHOOSE DEPOT");
+                }
+                else
+                {
+                    Console.WriteLine(CC.FirstName + " " + CC.LastName + " has no Depots");
+                    string CreateDepot = "";
+                    while((CreateDepot != "yes")&& (CreateDepot != "no"))
+                    {
+                        Console.WriteLine("Create Depot? Enter yes or no: ");
+                        CreateDepot = Console.ReadLine();
+                    }
+
+                    if(CreateDepot=="yes")
+                    {
+                        new Depot(CC);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            //Stock S1 = new Stock();
+            //Stock S2 = new Stock();
+
             //Stock S3 = new Stock();
             //Stock S4 = new Stock();
-            Customer E = DataControl.Instance.LoadAllCustomers()[0];
-            Depot Depot = new Depot(E);
-            Depot.AddStock(S2, 2);
-            Depot.AddStock(S1, 1);
-            //Depot Depot2 = new Depot(F);
-            //List<Stock> stockstoadd = new List<Stock>();
-            //stockstoadd.Add(S1);
-            //stockstoadd.Add(S3);
-            //stockstoadd.Add(S4);
+            //Customer E = DataControl.Instance.LoadAllCustomers()[0];
+            //Customer F = DataControl.Instance.LoadAllCustomers()[1];
+            //Depot Depot = new Depot(E);
+            //Depot.AddStock(S2, 2);
+            //Depot.AddStock(S1, 1);
+            //Console.WriteLine("TODO: Einlesen der gespeicherten Depots je Customer");
+            //Depot Depot2 = new Depot(E);
+            //List<KeyValuePair<Stock, int>> stockstoadd = new List<KeyValuePair<Stock,int>>();
+            ////stockstoadd.Add(S1);
+            //KeyValuePair<Stock, int> KPV1 = new KeyValuePair<Stock, int>(S3, 23);
+            //KeyValuePair<Stock, int> KPV2 = new KeyValuePair<Stock, int>(S4, 4);
+
+            //stockstoadd.Add(KPV1);
+            //stockstoadd.Add(KPV2);
+
             //Depot2.AddStocks(stockstoadd);
+
+            //List<Depot> DepotsVonF = DataControl.Instance.GetDepotsByCustomer(F);
+            //if (DepotsVonF.Count > 0)
+            //{
+            //    foreach (Depot _D in DepotsVonF)
+            //    {
+            //        Console.WriteLine("--------------------------------------");
+            //        Console.WriteLine(_D.ID);
+            //        Console.WriteLine(_D.Owner);
+            //        foreach (KeyValuePair<Stock, int> _S in _D.Stocks)
+            //        {
+            //            Console.WriteLine(_S.Key.ID + " (" + _S.Value.ToString() + ")");
+            //        }
+            //        Console.WriteLine("--------------------------------------");
+
+            //    }
+            //}
+            //else
+            //{
+            //    Console.WriteLine(F.FirstName + " " + F.LastName + " has no Depots");
+            //}
+
+            //List<Depot> DepotsVonE = DataControl.Instance.GetDepotsByCustomer(E);
+            //if (DepotsVonE.Count > 0)
+            //{
+            //    foreach (Depot _D in DepotsVonE)
+            //    {
+            //        Console.WriteLine("--------------------------------------");
+            //        Console.WriteLine(_D.ID);
+            //        Console.WriteLine(_D.Owner.ID);
+            //        foreach (KeyValuePair<Stock, int> _S in _D.Stocks)
+            //        {
+            //            Console.WriteLine(_S.Key.ID + " (" + _S.Value.ToString() + ")");
+            //        }
+            //        Console.WriteLine("--------------------------------------");
+
+            //    }
+            //}
+            //else
+            //{
+            //    Console.WriteLine(E.FirstName + " " + E.LastName + " has no Depots");
+            //}
+
+
 
             //GetAllStocks();
             //GetAllOrders();
@@ -113,8 +198,8 @@ namespace BoerseClient
 
         }
 
-            // Returns JSON string
-            static string GET(string url)
+        // Returns JSON string
+        static string GET(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             try

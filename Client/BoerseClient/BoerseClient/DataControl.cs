@@ -169,6 +169,37 @@ namespace BoerseClient
 
         }
 
+
+        public void SaveStocksToDepot(Depot _Depot, List<KeyValuePair<Stock, int>> _Stocks)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(DepotStorage);
+            XmlNodeList DepotOwnerNodes = xmlDoc.SelectNodes("//Depots/Depot/Owner");
+            foreach (XmlNode DepotOwnerNode in DepotOwnerNodes)
+            {
+
+                if ((DepotOwnerNode.InnerText == _Depot.Owner.ID.ToString())&&(DepotOwnerNode.PreviousSibling.InnerText == _Depot.ID.ToString()))
+                {
+                  
+                    foreach (KeyValuePair<Stock, int> s in _Stocks)
+                    {
+                        XmlAttribute sid = xmlDoc.CreateAttribute("SID");
+                        sid.Value = s.Key.ID;
+
+                        XmlAttribute amount = xmlDoc.CreateAttribute("Amount");
+                        amount.Value = s.Value.ToString();
+
+                        XmlElement EStock = xmlDoc.CreateElement("Stock");
+                        EStock.Attributes.Append(sid);
+                        EStock.Attributes.Append(amount);
+                        DepotOwnerNode.NextSibling.AppendChild(EStock);
+                    }
+                }
+            }
+            xmlDoc.Save(DepotStorage);
+
+        }
+
     public List<Depot> GetDepotsByCustomer(Customer _C)
     {
             try
@@ -182,8 +213,8 @@ namespace BoerseClient
                                           ID = xnode.Element("DID").Value.ToString(),
                                           Owner = _Customers.Find(Customer => Customer.ID == xnode.Element("Owner").Value.ToString()),
                                           Stocks =
-                                             (from xnodestock in doc.Element("Depots").Elements("Depot").Elements("Stocks").Elements("Stock")
-                                              select new KeyValuePair<Stock, int>(new Stock(xnodestock.Attribute("SID").ToString()), int.Parse(xnodestock.Attribute("Amount").ToString()))
+                                             (from xnodestock in xnode.Elements("Stocks").Elements("Stock")
+                                              select new KeyValuePair<Stock, int>(new Stock(xnodestock.Attribute("SID").Value.ToString()), int.Parse(xnodestock.Attribute("Amount").Value.ToString()))
                                               ).ToList()
                                       }).ToList();
                 List<Depot> DepotsByCustomer = new List<Depot>();
@@ -195,17 +226,15 @@ namespace BoerseClient
                     }
 
                 }
-
-                List<Depot> DepotsByCustomerLastEntry = new List<Depot>();
                 
 
                 return DepotsByCustomer;
-            }
+        }
             catch (Exception)
             {
                 return new List<Depot>();
             }
-        }
+}
 
    
 
