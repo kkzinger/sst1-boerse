@@ -63,7 +63,7 @@ namespace BoerseClient
 
                 while ((!uint.TryParse(CID_str, out CID)) || (CID < 0) || (CID > customercounter))
                 {
-                    Console.WriteLine("Please enter the Customer Nr. (0-" + (--customercounter) + "): ");
+                    Console.WriteLine("Please enter the Customer Nr. (0-" + (customercounter) + "): ");
                     CID_str = Console.ReadLine();
 
                 }
@@ -79,20 +79,105 @@ namespace BoerseClient
 
                 if (DepotsOfCustomers.Count > 0)
                 {
+                    uint depotcounter = 0;
                     Console.WriteLine("Depots: ");
                     foreach (Depot _D in DepotsOfCustomers)
                     {
                         Console.WriteLine("--------------------------------------");
-                        Console.WriteLine(_D.ID);
-                        Console.WriteLine(_D.Owner);
+                        Console.WriteLine("Depot Nr.: " + (depotcounter++));
+                        Console.WriteLine("Internal Depot Nr.: " + _D.ID);
+                        Console.WriteLine("Internal Customer Nr.: " + _D.Owner.ID);
+                        Console.WriteLine("Stocks: ");
                         foreach (KeyValuePair<Stock, int> _S in _D.Stocks)
                         {
-                            Console.WriteLine(_S.Key.ID + " (" + _S.Value.ToString() + ")");
+                            Console.WriteLine("             "+_S.Key.ID + " (" + _S.Value.ToString() + ")");
                         }
                         Console.WriteLine("--------------------------------------");
 
                     }
-                    Console.WriteLine("TODO: CHOOSE DEPOT");
+                    Console.WriteLine("Please enter the Depot Nr. (0-" + (--depotcounter) + "): ");
+                    string DID_str = Console.ReadLine();
+
+                    uint DID = 0;
+
+
+
+                    while ((!uint.TryParse(DID_str, out DID)) || (DID < 0) || (DID > depotcounter))
+                    {
+                        Console.WriteLine("Please enter the Depot Nr. (0-" + (depotcounter) + "): ");
+                        DID_str = Console.ReadLine();
+
+                    }
+                    DID = uint.Parse(DID_str);
+                    Console.WriteLine("Chosen Depot: ");
+                    Depot _DD = DataControl.Instance.GetDepotsByCustomer(CC)[(int)DID];
+                    Console.WriteLine("Depot Nr.: " + DID);
+                    Console.WriteLine("Internal Depot Nr.: " + _DD.ID);
+                    Console.WriteLine("Internal Customer Nr.: " + _DD.Owner.ID);
+                    Console.WriteLine("Stocks: ");
+                    foreach (KeyValuePair<Stock, int> _S in _DD.Stocks)
+                    {
+                        Console.WriteLine("             " + _S.Key.ID + " (" + _S.Value.ToString() + ")");
+                    }
+
+                    if(_DD.Stocks.Count <=0)
+                    {
+                        Console.WriteLine("No Stocks found in Depot - Loading available Stocks from Boerse...");
+                        Order[] Orders = GetAllOrders();
+                        Order[] SellOrders = new Order[Orders.Length];
+                        uint sellordercounter = 0;
+                        for(int i = 0; i<Orders.Length;i++)
+                        {
+                            if (Orders[i].type == "sell")
+                            {
+                                SellOrders[sellordercounter++] = Orders[i];
+                            }
+                        }
+                        uint ordercounter = 0;
+                        foreach (Order od in SellOrders)
+                        {
+
+                                Console.WriteLine("+++++++++++++++++++++++++++++++++++++++");
+                                Console.WriteLine("Order Nr.: " + ordercounter++);
+                                Console.WriteLine("ID: " + od.id);
+                                Console.WriteLine("Time: " + od.timestamp);
+                                Console.WriteLine("Type: " + od.type);
+                                Console.WriteLine("Boerse: " + od.idBoerse);
+                                Console.WriteLine("Customer: " + od.idCustomer);
+                                Console.WriteLine("Stock: " + od.idStock);
+                                Console.WriteLine("Amount: " + od.amount);
+                                Console.WriteLine("Price: " + od.price);
+                                Console.WriteLine("+++++++++++++++++++++++++++++++++++++++");
+                            
+
+                        }
+                        Console.WriteLine("Please enter the Order Nr. (0-" + (--ordercounter) + "): ");
+                        string OID_str = Console.ReadLine();
+
+                        uint OID = 0;
+
+
+
+                        while ((!uint.TryParse(OID_str, out OID)) || (OID < 0) || (OID > ordercounter))
+                        {
+                            Console.WriteLine("Please enter the Order Nr. (0-" + (ordercounter) + "): ");
+                            OID_str = Console.ReadLine();
+
+                        }
+                        OID = uint.Parse(OID_str);
+                        Console.WriteLine("Chosen Order: ");
+                        Order OO = SellOrders[OID];
+                        Console.WriteLine("Order Nr.: " + OID);
+                        Console.WriteLine("ID: " + OO.id);
+                        Console.WriteLine("Time: " + OO.timestamp);
+                        Console.WriteLine("Type: " + OO.type);
+                        Console.WriteLine("Boerse: " + OO.idBoerse);
+                        Console.WriteLine("Customer: " + OO.idCustomer);
+                        Console.WriteLine("Stock: " + OO.idStock);
+                        Console.WriteLine("Amount: " + OO.amount);
+                        Console.WriteLine("Price: " + OO.price);
+                        break;
+                    }
                 }
                 else
                 {
@@ -107,6 +192,7 @@ namespace BoerseClient
                     if(CreateDepot=="yes")
                     {
                         new Depot(CC);
+                        break;
                     }
                     else
                     {
@@ -248,7 +334,7 @@ namespace BoerseClient
             //{
             //    Console.WriteLine("+++++++++++++++++++++++++++++++++++++++");
             //    Console.WriteLine("ID: " + od.id);
-            //    Console.WriteLine("Time: "+od.timestamp);
+            //    Console.WriteLine("Time: " + od.timestamp);
             //    Console.WriteLine("Type: " + od.type);
             //    Console.WriteLine("Boerse: " + od.idBoerse);
             //    Console.WriteLine("Customer: " + od.idCustomer);
