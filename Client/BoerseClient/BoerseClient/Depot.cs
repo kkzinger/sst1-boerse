@@ -55,19 +55,22 @@ namespace BoerseClient
             }
         }
 
-        private List<Order> _IssuedSellOrders = new List<Order>();
-        public List<Order> IssuedSellOrders
+        private List<Order> _IssuedOrders = new List<Order>();
+        public List<Order> IssuedOrders
         {
             get
             {
-                return _IssuedSellOrders ;
+                return _IssuedOrders ;
             }
         }
 
-        public void AddSellOrder(Order _sellorder)
+        public void AddSellOrder(Order _order)
         {
-            this._IssuedSellOrders.Add(_sellorder);
+            this._IssuedOrders.Add(_order);
+            DataControl.Instance.SaveIssuedOrderToDepot(this,_order);
         }
+
+
 
         private List<KeyValuePair<Stock, int>> stocks = new List<KeyValuePair<Stock, int>>();
 

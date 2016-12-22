@@ -14,7 +14,7 @@ namespace BoerseClient
         private static DataControl instance;
         private static string CustomerStorage = "../../data /customers.xml";
         private static string DepotStorage = "../../data /depots.xml";
-        private static string StockStorage = "../../data /stocks.xml";
+     
         private DataControl() { }
 
         public static DataControl Instance
@@ -125,7 +125,20 @@ namespace BoerseClient
                         xmlWriter.WriteEndElement();
                                           
                     }
-                    
+                    xmlWriter.WriteEndElement();
+
+                    xmlWriter.WriteStartElement("IssuedOrders");
+
+
+                    foreach (Order _o in _D.IssuedOrders)
+                    {
+                        xmlWriter.WriteStartElement("IssuedOrder");
+                        xmlWriter.WriteAttributeString("OID", _o.id);
+                        xmlWriter.WriteAttributeString("BoerseID", _o.idBoerse);
+                        xmlWriter.WriteEndElement();
+
+                    }
+
                     xmlWriter.WriteEndElement();
                     xmlWriter.WriteElementString("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
                     xmlWriter.WriteEndElement();
@@ -158,6 +171,10 @@ namespace BoerseClient
                    _D.Stocks.Select(stock => new XElement("Stock",
                   new XAttribute("SID", stock.Key.ID),
                   new XAttribute("Amount",stock.Value.ToString())))),
+                    new XElement("IssuedOrders",
+                   _D.IssuedOrders.Select(order => new XElement("IssuedOrder",
+                  new XAttribute("OID", order.id),
+                  new XAttribute("BoerseID", order.idBoerse)))),
                    new XElement("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString())));
 
 
@@ -200,7 +217,37 @@ namespace BoerseClient
 
         }
 
-    public List<Depot> GetDepotsByCustomer(Customer _C)
+        public void SaveIssuedOrderToDepot(Depot _Depot, Order _Order)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(DepotStorage);
+            XmlNodeList DepotOwnerNodes = xmlDoc.SelectNodes("//Depots/Depot/Owner");
+            foreach (XmlNode DepotOwnerNode in DepotOwnerNodes)
+            {
+
+                if ((DepotOwnerNode.InnerText == _Depot.Owner.ID.ToString()) && (DepotOwnerNode.PreviousSibling.InnerText == _Depot.ID.ToString()))
+                {
+
+
+                        XmlAttribute oid = xmlDoc.CreateAttribute("OID");
+                        oid.Value = _Order.id;
+
+                        XmlAttribute boerseid = xmlDoc.CreateAttribute("BoerseID");
+                        boerseid.Value = _Order.idBoerse;
+
+                        XmlElement EOrder = xmlDoc.CreateElement("IssuedOrder");
+                        EOrder.Attributes.Append(oid);
+                        EOrder.Attributes.Append(boerseid);
+                        XmlNode EStock = DepotOwnerNode.NextSibling;
+                        EStock.NextSibling.AppendChild(EOrder);
+                    
+                }
+            }
+            xmlDoc.Save(DepotStorage);
+
+        }
+
+        public List<Depot> GetDepotsByCustomer(Customer _C)
     {
             try
             {

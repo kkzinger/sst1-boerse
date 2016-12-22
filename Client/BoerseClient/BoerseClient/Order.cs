@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -7,12 +8,19 @@ using System.Threading.Tasks;
 
 namespace BoerseClient
 {
+
+    public class Txhistory
+    {
+        public int amount { get; set; }
+        public double price { get; set; }
+    }
+
     public class Order
     {
 
         public Order()
         {
-            this._id = getUOID();
+           
         }
 
         private string CalculateMD5Hash(string input)
@@ -74,19 +82,19 @@ namespace BoerseClient
         }
 
 
-       double[,] _txhistory;
-       public  double[,] txhistory
-        {
-            get
-            {
-                return _txhistory;
-            }
-            set
-            {
-                _txhistory = value;
-            }
-        }
-
+        //List<Txhistory> _txhistory;
+        // public List<Txhistory> txhistory
+        //  {
+        //      get
+        //      {
+        //          return _txhistory;
+        //      }
+        //      set
+        //      {
+        //          _txhistory = value;
+        //      }
+        //  }
+        public List<Txhistory> txhistory { get; set; }
 
         string _idBoerse;
         public string idBoerse
@@ -192,15 +200,19 @@ namespace BoerseClient
             {
                 return _id;
             }
+            set
+            {
+                _id = value;
+            }
 
         }
 
-        private static string getUOID()
-        {
+        //private static string getUOID()
+        //{
 
-            return "O-" + Guid.NewGuid().ToString("N");
+        //    return "O-" + Guid.NewGuid().ToString("N");
 
-        }
+        //}
 
     }
 }
