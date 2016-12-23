@@ -75,7 +75,7 @@ namespace BoerseClient
                 Console.WriteLine("First Name: " + CC.FirstName);
                 Console.WriteLine("Last Name: " + CC.LastName);
 
-                List<Depot> DepotsOfCustomers = DataControl.Instance.GetDepotsByCustomer(CC);
+                List<Depot> DepotsOfCustomers = DataControl.Instance.GetDepotsByCustomer(CC,GetAllOrders());
 
                 if (DepotsOfCustomers.Count > 0)
                 {
@@ -88,10 +88,16 @@ namespace BoerseClient
                         Console.WriteLine("Internal Depot Nr.: " + _D.ID);
                         Console.WriteLine("Internal Customer Nr.: " + _D.Owner.ID);
                         Console.WriteLine("Stocks: ");
-                        foreach (KeyValuePair<Stock, int> _S in _D.Stocks)
+                        foreach (KeyValuePair<Stock, uint> _S in _D.Stocks)
                         {
                             Console.WriteLine("             "+_S.Key.ID + " (" + _S.Value.ToString() + ")");
                         }
+                        Console.WriteLine("Issued Orders: ");
+                        foreach (Order _o in _D.IssuedOrders)
+                        {
+                            Console.WriteLine("             " + _o.id + " "+_o.idBoerse+" "+_o.type+" "+_o.amount);
+                        }
+
                         Console.WriteLine("--------------------------------------");
 
                     }
@@ -110,16 +116,48 @@ namespace BoerseClient
                     }
                     DID = uint.Parse(DID_str);
                     Console.WriteLine("Chosen Depot: ");
-                    Depot _DD = DataControl.Instance.GetDepotsByCustomer(CC)[(int)DID];
+                    Depot _DD = DataControl.Instance.GetDepotsByCustomer(CC, GetAllOrders())[(int)DID];
                     Console.WriteLine("Depot Nr.: " + DID);
                     Console.WriteLine("Internal Depot Nr.: " + _DD.ID);
                     Console.WriteLine("Internal Customer Nr.: " + _DD.Owner.ID);
                     Console.WriteLine("Stocks: ");
-                    foreach (KeyValuePair<Stock, int> _S in _DD.Stocks)
+
+                    Console.WriteLine("Evaluating Issued Orders...");
+                    //TODO: hier order check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    Order[] ALLORDERS = GetAllOrders();
+                    foreach (Order _o in _DD.IssuedOrders)
+                    {
+                       for(int i =0; i<ALLORDERS.Length;i++)
+                        {
+                            if(_o.id == ALLORDERS[i].id)
+                            {
+                                if(ALLORDERS[i].amount ==0)
+                                {
+                                    if(_o.type =="buy")
+                                    {
+                                        Stock _s = new Stock(_o.idStock);
+                                        _s.IDBOERSE = _o.idBoerse;
+                                        _s.Price = _o.price;
+
+                                        _DD.AddStock(_s,_o.amount);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+
+
+
+
+                    foreach (KeyValuePair<Stock, uint> _S in _DD.Stocks)
                     {
                         Console.WriteLine("             " + _S.Key.ID + " (" + _S.Value.ToString() + ")");
                     }
-
+                    
                     if(_DD.Stocks.Count <=0)
                     {
                         Console.WriteLine("No Stocks found in Depot - Loading available Stocks from Boerse...");
@@ -248,9 +286,9 @@ namespace BoerseClient
 
                             BuyOrder = JsonConvert.DeserializeObject<Order>(SendOrder(BuyOrder));
                             _DD.AddSellOrder(BuyOrder);
+                            Console.WriteLine("Order has been sent!");
 
-
-                            break;
+                            continue;
                         }
                         else
                         {

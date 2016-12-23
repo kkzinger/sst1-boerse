@@ -117,7 +117,7 @@ namespace BoerseClient
                     xmlWriter.WriteStartElement("Stocks");
                     
 
-                    foreach (KeyValuePair<Stock,int> _s in _D.Stocks)
+                    foreach (KeyValuePair<Stock,uint> _s in _D.Stocks)
                     {
                         xmlWriter.WriteStartElement("Stock");
                         xmlWriter.WriteAttributeString("SID", _s.Key.ID);
@@ -135,6 +135,8 @@ namespace BoerseClient
                         xmlWriter.WriteStartElement("IssuedOrder");
                         xmlWriter.WriteAttributeString("OID", _o.id);
                         xmlWriter.WriteAttributeString("BoerseID", _o.idBoerse);
+                        xmlWriter.WriteAttributeString("Type", _o.type);
+                        xmlWriter.WriteAttributeString("Amount", _o.amount.ToString());
                         xmlWriter.WriteEndElement();
 
                     }
@@ -174,7 +176,9 @@ namespace BoerseClient
                     new XElement("IssuedOrders",
                    _D.IssuedOrders.Select(order => new XElement("IssuedOrder",
                   new XAttribute("OID", order.id),
-                  new XAttribute("BoerseID", order.idBoerse)))),
+                  new XAttribute("BoerseID", order.idBoerse),
+                  new XAttribute("Type", order.type),
+                  new XAttribute("Amount", order.amount)))),
                    new XElement("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString())));
 
 
@@ -187,7 +191,7 @@ namespace BoerseClient
         }
 
 
-        public void SaveStocksToDepot(Depot _Depot, List<KeyValuePair<Stock, int>> _Stocks)
+        public void SaveStocksToDepot(Depot _Depot, List<KeyValuePair<Stock, uint>> _Stocks)
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(DepotStorage);
@@ -198,7 +202,7 @@ namespace BoerseClient
                 if ((DepotOwnerNode.InnerText == _Depot.Owner.ID.ToString())&&(DepotOwnerNode.PreviousSibling.InnerText == _Depot.ID.ToString()))
                 {
                   
-                    foreach (KeyValuePair<Stock, int> s in _Stocks)
+                    foreach (KeyValuePair<Stock, uint> s in _Stocks)
                     {
                         XmlAttribute sid = xmlDoc.CreateAttribute("SID");
                         sid.Value = s.Key.ID;
@@ -235,9 +239,17 @@ namespace BoerseClient
                         XmlAttribute boerseid = xmlDoc.CreateAttribute("BoerseID");
                         boerseid.Value = _Order.idBoerse;
 
+                        XmlAttribute type = xmlDoc.CreateAttribute("Type");
+                        type.Value = _Order.type;
+
+                        XmlAttribute amount = xmlDoc.CreateAttribute("Amount");
+                        amount.Value = _Order.amount.ToString();
+
                         XmlElement EOrder = xmlDoc.CreateElement("IssuedOrder");
                         EOrder.Attributes.Append(oid);
                         EOrder.Attributes.Append(boerseid);
+                        EOrder.Attributes.Append(type);
+                        EOrder.Attributes.Append(amount);
                         XmlNode EStock = DepotOwnerNode.NextSibling;
                         EStock.NextSibling.AppendChild(EOrder);
                     
@@ -247,8 +259,8 @@ namespace BoerseClient
 
         }
 
-        public List<Depot> GetDepotsByCustomer(Customer _C)
-    {
+        public List<Depot> GetDepotsByCustomer(Customer _C, Order[] _orders)
+        {
             try
             {
                 List<Customer> _Customers = LoadAllCustomers();
@@ -261,8 +273,12 @@ namespace BoerseClient
                                           Owner = _Customers.Find(Customer => Customer.ID == xnode.Element("Owner").Value.ToString()),
                                           Stocks =
                                              (from xnodestock in xnode.Elements("Stocks").Elements("Stock")
-                                              select new KeyValuePair<Stock, int>(new Stock(xnodestock.Attribute("SID").Value.ToString()), int.Parse(xnodestock.Attribute("Amount").Value.ToString()))
-                                              ).ToList()
+                                              select new KeyValuePair<Stock, uint>(new Stock(xnodestock.Attribute("SID").Value.ToString()), uint.Parse(xnodestock.Attribute("Amount").Value.ToString()))
+                                              ).ToList(),
+                                          IssuedOrders =
+                                             (from xnodeorder in xnode.Elements("IssuedOrders").Elements("IssuedOrder")
+                                              select new Order(xnodeorder.Attribute("OID").Value.ToString(), _orders)
+                                              ).ToList(),
                                       }).ToList();
                 List<Depot> DepotsByCustomer = new List<Depot>();
                 foreach(Depot d in Depots)

@@ -62,6 +62,10 @@ namespace BoerseClient
             {
                 return _IssuedOrders ;
             }
+            set
+            {
+                _IssuedOrders = value;
+            }
         }
 
         public void AddSellOrder(Order _order)
@@ -72,9 +76,9 @@ namespace BoerseClient
 
 
 
-        private List<KeyValuePair<Stock, int>> stocks = new List<KeyValuePair<Stock, int>>();
+        private List<KeyValuePair<Stock, uint>> stocks = new List<KeyValuePair<Stock, uint>>();
 
-        public List<KeyValuePair<Stock, int>> Stocks
+        public List<KeyValuePair<Stock, uint>> Stocks
         {
             get
             {
@@ -87,20 +91,20 @@ namespace BoerseClient
             }
         }
 
-        public void AddStock(Stock _stock, int _amount)
+        public void AddStock(Stock _stock, uint _amount)
         {
 
-            this.stocks.Add(new KeyValuePair<Stock, int>(_stock, _amount));
-            List<KeyValuePair<Stock, int>> StockList = new List<KeyValuePair<Stock, int>>();
-            KeyValuePair<Stock, int> KVP = new KeyValuePair<Stock, int>(_stock, _amount);
+            this.stocks.Add(new KeyValuePair<Stock, uint>(_stock, _amount));
+            List<KeyValuePair<Stock, uint>> StockList = new List<KeyValuePair<Stock, uint>>();
+            KeyValuePair<Stock, uint> KVP = new KeyValuePair<Stock, uint>(_stock, _amount);
             StockList.Add(KVP);
             DataControl.Instance.SaveStocksToDepot(this, StockList);
             
         }
 
-        public void AddStocks(List<KeyValuePair<Stock, int>> _stocks)
+        public void AddStocks(List<KeyValuePair<Stock, uint>> _stocks)
         {
-            foreach ( KeyValuePair<Stock, int> s in _stocks)
+            foreach ( KeyValuePair<Stock, uint> s in _stocks)
             {
                 this.stocks.Add(s);
             }
