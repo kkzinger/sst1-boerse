@@ -10,11 +10,18 @@ namespace BoerseClient
     {
         private string id { get; set; }
 
+
+
         public string ID
         {
             get
             {
                 return id;
+            }
+
+            set
+            {
+                id = value;
             }
         }
 
@@ -26,32 +33,78 @@ namespace BoerseClient
             {
                 return owner;
             }
+
+            set
+            {
+                owner = value;
+            }
         }
 
-        private List<Stock> stocks = new List<Stock>();
 
-        public List<Stock> Stocks
+        private double worth;
+        public double Worth
+        {
+            get
+            {
+                return worth;
+            }
+
+            set
+            {
+                worth = value - value;
+            }
+        }
+
+        private List<Order> _IssuedOrders = new List<Order>();
+        public List<Order> IssuedOrders
+        {
+            get
+            {
+                return _IssuedOrders ;
+            }
+        }
+
+        public void AddSellOrder(Order _order)
+        {
+            this._IssuedOrders.Add(_order);
+            DataControl.Instance.SaveIssuedOrderToDepot(this,_order);
+        }
+
+
+
+        private List<KeyValuePair<Stock, int>> stocks = new List<KeyValuePair<Stock, int>>();
+
+        public List<KeyValuePair<Stock, int>> Stocks
         {
             get
             {
                 return stocks;
             }
+
+            set
+            {
+                stocks = value;
+            }
         }
 
-        public void AddStock(Stock _stock)
+        public void AddStock(Stock _stock, int _amount)
         {
-            this.stocks.Add(_stock);
-            DataControl.Instance.SaveDepot(this);
+
+            this.stocks.Add(new KeyValuePair<Stock, int>(_stock, _amount));
+            List<KeyValuePair<Stock, int>> StockList = new List<KeyValuePair<Stock, int>>();
+            KeyValuePair<Stock, int> KVP = new KeyValuePair<Stock, int>(_stock, _amount);
+            StockList.Add(KVP);
+            DataControl.Instance.SaveStocksToDepot(this, StockList);
             
         }
 
-        public void AddStocks(List<Stock> _stocks)
+        public void AddStocks(List<KeyValuePair<Stock, int>> _stocks)
         {
-            foreach (Stock s in _stocks)
+            foreach ( KeyValuePair<Stock, int> s in _stocks)
             {
                 this.stocks.Add(s);
             }
-            DataControl.Instance.SaveDepot(this);
+            DataControl.Instance.SaveStocksToDepot(this, _stocks);
 
         }
 
@@ -60,8 +113,14 @@ namespace BoerseClient
         {
             id = getUDID();
             this.owner = _owner;
-
+            
+            //this.AddStock(new Stock(), 33);
             DataControl.Instance.SaveDepot(this);
+
+        }
+
+        public Depot()
+        {
 
         }
 

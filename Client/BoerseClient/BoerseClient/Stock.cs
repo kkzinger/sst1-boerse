@@ -67,14 +67,20 @@ namespace BoerseClient
 
         public Stock()
         {
-           //id= getUSID();
+            id= getUSID();
+           // id =" TODO: GET THE ID FROM ALLSTOCKS";
         }
 
-        //private static string getUSID()
-        //{
+        public Stock(string _ID)
+        {
+            id = _ID;
+        }
 
-        //    return "S-" + Guid.NewGuid().ToString("N");
+        private static string getUSID()
+        {
 
-        //}
+            return "S-" + Guid.NewGuid().ToString("N");
+
+        }
     }
 }
