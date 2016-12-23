@@ -9,7 +9,7 @@ from boto.dynamodb2.table import Table
 from flask.ext.dynamo import Dynamo
 
 from dateutil.parser import parse
-from dateutil.tz import gettz 
+from dateutil.tz import gettz
 
 print(os.environ["AWS_ACCESS_KEY_ID"])
 print(os.environ["AWS_SECRET_ACCESS_KEY"])
@@ -100,13 +100,13 @@ def order():
                         txhistory = []
                         if dynorder['txhistory'] != None:
                             for trans in dynorder['txhistory']:
-                                hist = {} 
+                                hist = {}
                                 hist['amount'] = int(trans[0])
                                 hist['price'] = float(trans[1])
                                 txhistory.append(hist)
                         order['txhistory'] = txhistory
                         orders.append(order)
-                
+
                     return json.dumps(orders)
 
                 else:
@@ -130,7 +130,7 @@ def order():
                             hist['amount'] = int(trans[0])
                             hist['price'] = float(trans[1])
                             txhistory.append(hist)
- 
+
                     order['txhistory'] = txhistory
 
 
@@ -147,12 +147,12 @@ def order():
                     return 'No orderId provided',400
 
                 dynorder = dynamo.orders.get_item(id=orderId)
-                
+
                 dynorder['amount'] = 0
                 if dynorder.save(overwrite=True):
                     return 'success', 200
                 else:
-                    return 'fail', 400 
+                    return 'fail', 400
             except Exception as error:
                 return 'Exception:\n{0}'.format(error),500
         else:
@@ -180,14 +180,14 @@ def trade():
     try:
         dynstocks = dynamo.stocks.scan()
         dynorders = dynamo.orders.scan()
-        
+
         for stock in dynstocks:
             newStockPrice = calcExchange(stock['id'], list(dynorders))
             print(newStockPrice)
             tempstock = dynamo.stocks.get_item(id=stock['id'])
             tempstock['price'] = str(newStockPrice)
-            tempstock.save() 
-            
+            tempstock.save()
+
             dynamo.priceHistory.put_item(data={
                 'id': stock['id'],
                 'price': str(newStockPrice),
@@ -207,7 +207,7 @@ def calcExchange(idStock, orders):
     for order in orders:
         if order['idStock'] == idStock:
             prices.append(float(order['price']))
-    
+
     # determine with which price the most trade volume is generated
     print('-- PRICE EVALUATION --')
     for price in set(prices):
@@ -215,7 +215,7 @@ def calcExchange(idStock, orders):
          sellCount = 0
          for order in orders:
              if (order['type'] == 'sell' and float(order['price']) <= price and order['idStock'] == idStock):
-                 sellCount += order['amount'] 
+                 sellCount += order['amount']
              elif (order['type'] == 'buy' and float(order['price']) >= price and order['idStock'] == idStock):
                  buyCount += order['amount']
          if sellCount > buyCount:
@@ -231,13 +231,13 @@ def calcExchange(idStock, orders):
          elif volume == maxVolume and price < finalPrice:
              finalPrice = price
 
-         print('price: {} -- buy: {} -- sell: {} -- volume: {}'.format(price,buyCount,sellCount,volume))         
+         print('price: {} -- buy: {} -- sell: {} -- volume: {}'.format(price,buyCount,sellCount,volume))
 
     if finalPrice == 0:
         print('-- NO TRADE because no orders match --')
         return float(dynamo.stocks.get_item(id=idStock)['price'])
     # trade with new price
-    ordersSorted = sorted(orders, key=getkey)    
+    ordersSorted = sorted(orders, key=getkey)
     sellOrders = []
     buyOrders = []
     sellAmount = 0
@@ -248,7 +248,7 @@ def calcExchange(idStock, orders):
         if (order['type'] == 'sell' and float(order['price']) <= finalPrice and order['idStock'] == idStock):
             item = dynamo.orders.get_item(id=order['id'])
             itAmount = item['amount']
-            
+
             if (itAmount + sellAmount) <= maxVolume:
                 item['amount'] = 0
                 sellAmount += itAmount
@@ -268,11 +268,11 @@ def calcExchange(idStock, orders):
                     item['txhistory'].append([str(partAmount),str(finalPrice)])
                 item.save()
                 print('traded: order {} -- stock {} -- type {} -- amount {} -- sellAmount {}'.format(item['id'],item['idStock'],item['type'],partAmount,sellAmount))
-    
+
         elif (order['type'] == 'buy' and float(order['price']) >= finalPrice and order['idStock'] == idStock):
             item = dynamo.orders.get_item(id=order['id'])
             itAmount = item['amount']
-            
+
             if (itAmount + buyAmount) <= maxVolume:
                 item['amount'] = 0
                 buyAmount += itAmount
@@ -298,29 +298,6 @@ def calcExchange(idStock, orders):
 
 def getkey(custom):
     return custom['timestamp']
-   
-#class order(object):
-#  def __init__(self, id, idStock, amount, price, type, txhistory, timestamp, idBoerse, signature, idBank, idCustomer):
-#     self.id = id
-#     self.idStock = idStock
-#     self.amount = amount
-#     self.price = price
-#     self.type = type
-#     self.txhistory = txhistory
-#     self.timestamp = timestamp
-#     self.idBoerse = idBoerse
-#     self.signature = signature
-#     self.idBank = idBank
-#     self.idCustomer = idCustomer
-#
-#class stock(object):
-#    def __init__(self,id,name,price,idBoerse):
-#        self.id = id
-#        self.name = name
-#        self.price = price
-#        self.idBoerse = idBoerse
-#
-#def createOrder():
-#    return 'foo'
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
