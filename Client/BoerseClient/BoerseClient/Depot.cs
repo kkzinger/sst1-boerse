@@ -55,6 +55,26 @@ namespace BoerseClient
             }
         }
 
+        public double CalcCurrentWorth(Stock[] _AllStocks)
+        {
+            this.worth = 0d;
+            foreach (KeyValuePair<Stock,uint> KPV in this.Stocks)
+            {
+                foreach(Stock _S in _AllStocks)
+                {
+                    if(KPV.Key.ID == _S.ID)
+                    {
+                        KPV.Key.Price = _S.Price;
+                        this.worth += KPV.Key.Price * KPV.Value;
+                    }
+                }
+            }
+
+            DataControl.Instance.UpdateWorthInDepot(this, this.worth);
+
+            return this.worth;
+        }
+
         private List<Order> _IssuedOrders = new List<Order>();
         public List<Order> IssuedOrders
         {
@@ -117,7 +137,7 @@ namespace BoerseClient
         {
             id = getUDID();
             this.owner = _owner;
-            
+
             //this.AddStock(new Stock(), 33);
             DataControl.Instance.SaveDepot(this);
 

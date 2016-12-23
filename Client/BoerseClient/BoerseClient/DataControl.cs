@@ -143,6 +143,7 @@ namespace BoerseClient
 
                     xmlWriter.WriteEndElement();
                     xmlWriter.WriteElementString("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+                    xmlWriter.WriteElementString("Worth", _D.Worth.ToString());
                     xmlWriter.WriteEndElement();
                     xmlWriter.WriteEndElement();
                     xmlWriter.WriteEndDocument();
@@ -179,7 +180,8 @@ namespace BoerseClient
                   new XAttribute("BoerseID", order.idBoerse),
                   new XAttribute("Type", order.type),
                   new XAttribute("Amount", order.amount)))),
-                   new XElement("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString())));
+                   new XElement("TimeStamp", DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString()),
+                   new XElement("Worth", _D.Worth.ToString())));
 
 
                 xDocument.Save(DepotStorage);
@@ -262,6 +264,41 @@ namespace BoerseClient
 
             xmlDoc.Save(DepotStorage);
         }
+
+
+
+
+        public void UpdateWorthInDepot(Depot _Depot, double _new_worth)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(DepotStorage);
+            XmlNodeList DepotOwnerNodes = xmlDoc.SelectNodes("//Depots/Depot/Owner");
+            foreach (XmlNode DepotOwnerNode in DepotOwnerNodes)
+            {
+
+                if ((DepotOwnerNode.InnerText == _Depot.Owner.ID.ToString()) && (DepotOwnerNode.PreviousSibling.InnerText == _Depot.ID.ToString()))
+                {
+                    XmlNode EStock = DepotOwnerNode.NextSibling;
+                    XmlNode EOrder = EStock.NextSibling;
+                    XmlNode ETime = EOrder.NextSibling;
+                    XmlNode EWorth = ETime.NextSibling;
+
+                    foreach (XmlNode WorthNode in EWorth)
+                    {
+                        WorthNode.InnerText = _new_worth.ToString();
+
+                    }
+
+                }
+            }
+
+            xmlDoc.Save(DepotStorage);
+        }
+
+
+
+
+
 
         public void SaveIssuedOrderToDepot(Depot _Depot, Order _Order)
         {
@@ -357,7 +394,7 @@ namespace BoerseClient
 }
 
    
-
+        
 
     }
 }
