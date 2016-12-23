@@ -55,12 +55,36 @@ namespace BoerseClient
             }
         }
 
+        public double CalcCurrentWorth(Stock[] _AllStocks)
+        {
+            this.worth = 0d;
+            foreach (KeyValuePair<Stock,uint> KPV in this.Stocks)
+            {
+                foreach(Stock _S in _AllStocks)
+                {
+                    if(KPV.Key.ID == _S.ID)
+                    {
+                        KPV.Key.Price = _S.Price;
+                        this.worth += KPV.Key.Price * KPV.Value;
+                    }
+                }
+            }
+
+            DataControl.Instance.UpdateWorthInDepot(this, this.worth);
+
+            return this.worth;
+        }
+
         private List<Order> _IssuedOrders = new List<Order>();
         public List<Order> IssuedOrders
         {
             get
             {
                 return _IssuedOrders ;
+            }
+            set
+            {
+                _IssuedOrders = value;
             }
         }
 
@@ -72,9 +96,9 @@ namespace BoerseClient
 
 
 
-        private List<KeyValuePair<Stock, int>> stocks = new List<KeyValuePair<Stock, int>>();
+        private List<KeyValuePair<Stock, uint>> stocks = new List<KeyValuePair<Stock, uint>>();
 
-        public List<KeyValuePair<Stock, int>> Stocks
+        public List<KeyValuePair<Stock, uint>> Stocks
         {
             get
             {
@@ -87,20 +111,20 @@ namespace BoerseClient
             }
         }
 
-        public void AddStock(Stock _stock, int _amount)
+        public void AddStock(Stock _stock, uint _amount)
         {
 
-            this.stocks.Add(new KeyValuePair<Stock, int>(_stock, _amount));
-            List<KeyValuePair<Stock, int>> StockList = new List<KeyValuePair<Stock, int>>();
-            KeyValuePair<Stock, int> KVP = new KeyValuePair<Stock, int>(_stock, _amount);
+            this.stocks.Add(new KeyValuePair<Stock, uint>(_stock, _amount));
+            List<KeyValuePair<Stock, uint>> StockList = new List<KeyValuePair<Stock, uint>>();
+            KeyValuePair<Stock, uint> KVP = new KeyValuePair<Stock, uint>(_stock, _amount);
             StockList.Add(KVP);
             DataControl.Instance.SaveStocksToDepot(this, StockList);
             
         }
 
-        public void AddStocks(List<KeyValuePair<Stock, int>> _stocks)
+        public void AddStocks(List<KeyValuePair<Stock, uint>> _stocks)
         {
-            foreach ( KeyValuePair<Stock, int> s in _stocks)
+            foreach ( KeyValuePair<Stock, uint> s in _stocks)
             {
                 this.stocks.Add(s);
             }
@@ -113,7 +137,7 @@ namespace BoerseClient
         {
             id = getUDID();
             this.owner = _owner;
-            
+
             //this.AddStock(new Stock(), 33);
             DataControl.Instance.SaveDepot(this);
 

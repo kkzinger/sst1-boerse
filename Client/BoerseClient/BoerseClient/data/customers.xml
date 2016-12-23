@@ -2,14 +2,14 @@
 <Customers>
   <Customer>
     <CID>C-e31d60e7-e787-45b6-8bbe-4a1d3fb1e7d7</CID>
-    <FirstName>Cus</FirstName>
-    <LastName>Tomer</LastName>
+    <FirstName>Gerold</FirstName>
+    <LastName>Katzinger</LastName>
     <TimeStamp>1481903861993</TimeStamp>
   </Customer>
     <Customer>
     <CID>C-e31d60e7-e787-45b6-8bbe-4a1d3fb1e7d8</CID>
-    <FirstName>Cus</FirstName>
-    <LastName>Tomer22</LastName>
+    <FirstName>Tobias</FirstName>
+    <LastName>Mayer</LastName>
     <TimeStamp>1481903861994</TimeStamp>
   </Customer>
 </Customers>

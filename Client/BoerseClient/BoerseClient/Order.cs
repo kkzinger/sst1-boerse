@@ -23,6 +23,28 @@ namespace BoerseClient
            
         }
 
+        public Order(string _id, Order[] _orders, string _amount)
+        {
+            foreach(Order _o in _orders)
+            {
+                if(_o.id == _id)
+                {
+                    this.id = _o.id;
+                    this.idBank = _o.idBank;
+                    this.idBoerse = _o.idBoerse;
+                    this.idStock = _o.idStock;
+                    this.price = _o.price;
+                    this.amount = uint.Parse(_amount);
+                    this.type = _o.type;
+                    this.idCustomer = _o.idCustomer;
+                    this.signature = _o.signature;
+                    this.timestamp = _o.timestamp;
+                    this.txhistory = _o.txhistory;
+                }
+            }
+
+        }
+
         private string CalculateMD5Hash(string input)
 
         {
