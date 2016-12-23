@@ -201,24 +201,66 @@ namespace BoerseClient
 
                 if ((DepotOwnerNode.InnerText == _Depot.Owner.ID.ToString())&&(DepotOwnerNode.PreviousSibling.InnerText == _Depot.ID.ToString()))
                 {
-                  
-                    foreach (KeyValuePair<Stock, uint> s in _Stocks)
-                    {
-                        XmlAttribute sid = xmlDoc.CreateAttribute("SID");
-                        sid.Value = s.Key.ID;
 
-                        XmlAttribute amount = xmlDoc.CreateAttribute("Amount");
-                        amount.Value = s.Value.ToString();
+                        foreach (KeyValuePair<Stock, uint> s in _Stocks)
+                        {
 
-                        XmlElement EStock = xmlDoc.CreateElement("Stock");
-                        EStock.Attributes.Append(sid);
-                        EStock.Attributes.Append(amount);
-                        DepotOwnerNode.NextSibling.AppendChild(EStock);
+
+                            XmlAttribute sid = xmlDoc.CreateAttribute("SID");
+                            sid.Value = s.Key.ID;
+
+                            XmlAttribute amount = xmlDoc.CreateAttribute("Amount");
+                            amount.Value = s.Value.ToString();
+
+                            XmlElement EStock = xmlDoc.CreateElement("Stock");
+                            EStock.Attributes.Append(sid);
+                            EStock.Attributes.Append(amount);
+                            DepotOwnerNode.NextSibling.AppendChild(EStock);
+                           
+                        }
                     }
                 }
-            }
+            
             xmlDoc.Save(DepotStorage);
 
+        }
+
+        public void UpdateStockInDepot(Depot _Depot, KeyValuePair<Stock, uint> _Stock, int _diff)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(DepotStorage);
+            XmlNodeList DepotOwnerNodes = xmlDoc.SelectNodes("//Depots/Depot/Owner");
+            foreach (XmlNode DepotOwnerNode in DepotOwnerNodes)
+            {
+
+                if ((DepotOwnerNode.InnerText == _Depot.Owner.ID.ToString()) && (DepotOwnerNode.PreviousSibling.InnerText == _Depot.ID.ToString()))
+                {
+                    XmlNode EStock = DepotOwnerNode.NextSibling;
+                    bool updated = false;
+                    foreach (XmlNode StockNode in EStock)
+                    {
+                            if ((StockNode.Attributes["SID"].Value.ToString() == _Stock.Key.ID) && (uint.Parse(StockNode.Attributes["Amount"].Value.ToString() )== _Stock.Value))
+                            {
+ 
+                            int _new_amt = (int)_Stock.Value - _diff;
+                                if ((_new_amt > 0)&&(updated == false))
+                                {
+                                    StockNode.Attributes["Amount"].Value = _new_amt.ToString();
+                                    updated = true;
+                                }
+                                else if ((_new_amt <= 0) && (updated == false))
+                                {
+                                     EStock.RemoveChild(StockNode);
+                                     updated = true;
+                                }   
+                            }
+                        
+                    }
+
+                }
+            }
+
+            xmlDoc.Save(DepotStorage);
         }
 
         public void SaveIssuedOrderToDepot(Depot _Depot, Order _Order)
@@ -232,7 +274,8 @@ namespace BoerseClient
                 if ((DepotOwnerNode.InnerText == _Depot.Owner.ID.ToString()) && (DepotOwnerNode.PreviousSibling.InnerText == _Depot.ID.ToString()))
                 {
 
-
+                    if (_Order.amount > 0)
+                    {
                         XmlAttribute oid = xmlDoc.CreateAttribute("OID");
                         oid.Value = _Order.id;
 
@@ -252,6 +295,20 @@ namespace BoerseClient
                         EOrder.Attributes.Append(amount);
                         XmlNode EStock = DepotOwnerNode.NextSibling;
                         EStock.NextSibling.AppendChild(EOrder);
+                    }
+                    else
+                    {
+                        XmlNode EStock = DepotOwnerNode.NextSibling;
+                        XmlNode EOrder = EStock.NextSibling;
+                        foreach (XmlNode OrderNode in EOrder)
+                        {
+                            if(OrderNode.Attributes["OID"].Value.ToString()==_Order.id)
+                            {
+                                EOrder.RemoveChild(OrderNode);
+                            }
+                        }
+                           
+                    }
                     
                 }
             }
@@ -277,7 +334,7 @@ namespace BoerseClient
                                               ).ToList(),
                                           IssuedOrders =
                                              (from xnodeorder in xnode.Elements("IssuedOrders").Elements("IssuedOrder")
-                                              select new Order(xnodeorder.Attribute("OID").Value.ToString(), _orders)
+                                              select new Order(xnodeorder.Attribute("OID").Value.ToString(), _orders, xnodeorder.Attribute("Amount").Value.ToString())
                                               ).ToList(),
                                       }).ToList();
                 List<Depot> DepotsByCustomer = new List<Depot>();

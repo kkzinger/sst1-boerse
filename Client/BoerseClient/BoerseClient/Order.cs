@@ -23,7 +23,7 @@ namespace BoerseClient
            
         }
 
-        public Order(string _id, Order[] _orders)
+        public Order(string _id, Order[] _orders, string _amount)
         {
             foreach(Order _o in _orders)
             {
@@ -34,7 +34,7 @@ namespace BoerseClient
                     this.idBoerse = _o.idBoerse;
                     this.idStock = _o.idStock;
                     this.price = _o.price;
-                    this.amount = _o.amount;
+                    this.amount = uint.Parse(_amount);
                     this.type = _o.type;
                     this.idCustomer = _o.idCustomer;
                     this.signature = _o.signature;

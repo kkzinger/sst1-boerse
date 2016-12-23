@@ -19,10 +19,12 @@ namespace BoerseClient
 
         static void Main(string[] args)
         {
+
+            
+
             while (true)
             {
                 Console.WriteLine("Welcome to the Stock Deal App of dieBank!");
-
                 List<Customer> Customers = DataControl.Instance.LoadAllCustomers();
                 while (Customers.Count <= 0)
                 {
@@ -75,7 +77,7 @@ namespace BoerseClient
                 Console.WriteLine("First Name: " + CC.FirstName);
                 Console.WriteLine("Last Name: " + CC.LastName);
 
-                List<Depot> DepotsOfCustomers = DataControl.Instance.GetDepotsByCustomer(CC,GetAllOrders());
+                List<Depot> DepotsOfCustomers = DataControl.Instance.GetDepotsByCustomer(CC, GetAllOrders());
 
                 if (DepotsOfCustomers.Count > 0)
                 {
@@ -90,12 +92,12 @@ namespace BoerseClient
                         Console.WriteLine("Stocks: ");
                         foreach (KeyValuePair<Stock, uint> _S in _D.Stocks)
                         {
-                            Console.WriteLine("             "+_S.Key.ID + " (" + _S.Value.ToString() + ")");
+                            Console.WriteLine("             " + _S.Key.ID + " (" + _S.Value.ToString() + ")");
                         }
                         Console.WriteLine("Issued Orders: ");
                         foreach (Order _o in _D.IssuedOrders)
                         {
-                            Console.WriteLine("             " + _o.id + " "+_o.idBoerse+" "+_o.type+" "+_o.amount);
+                            Console.WriteLine("             " + _o.id + " " + _o.idBoerse + " " + _o.type + " " + _o.amount);
                         }
 
                         Console.WriteLine("--------------------------------------");
@@ -121,52 +123,173 @@ namespace BoerseClient
                     Console.WriteLine("Internal Depot Nr.: " + _DD.ID);
                     Console.WriteLine("Internal Customer Nr.: " + _DD.Owner.ID);
                     Console.WriteLine("Stocks: ");
-
-                    Console.WriteLine("Evaluating Issued Orders...");
-                    //TODO: hier order check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    Order[] ALLORDERS = GetAllOrders();
-                    foreach (Order _o in _DD.IssuedOrders)
+                    if (_DD.IssuedOrders.Count > 0)
                     {
-                       for(int i =0; i<ALLORDERS.Length;i++)
+                        Console.WriteLine("- Evaluating Issued Orders...");
+                        Order[] ALLORDERS = GetAllOrders();
+                        foreach (Order _o in _DD.IssuedOrders)
                         {
-                            if(_o.id == ALLORDERS[i].id)
+                            for (int i = 0; i < ALLORDERS.Length; i++)
                             {
-                                if(ALLORDERS[i].amount ==0)
+                                if (_o.id == ALLORDERS[i].id)
                                 {
-                                    if(_o.type =="buy")
+                                    if (ALLORDERS[i].amount == 0)
                                     {
-                                        Stock _s = new Stock(_o.idStock);
-                                        _s.IDBOERSE = _o.idBoerse;
-                                        _s.Price = _o.price;
+                                        if (_o.type == "buy")
+                                        {
+                                            Stock _s = new Stock(_o.idStock);
+                                            _s.IDBOERSE = _o.idBoerse;
+                                            _s.Price = _o.price;
 
-                                        _DD.AddStock(_s,_o.amount);
+                                            _DD.AddStock(_s, _o.amount);
+                                            DataControl.Instance.SaveIssuedOrderToDepot(_DD, ALLORDERS[i]);
+                                        }
+                                        else if(_o.type == "sell")
+                                        {
+                                            Stock _s = new Stock(_o.idStock);
+                                            _s.IDBOERSE = _o.idBoerse;
+                                            _s.Price = _o.price;
+                                            uint old_amount = 0;
+                                            foreach (KeyValuePair<Stock, uint> _S in _DD.Stocks)
+                                            {
+                                                if(_s.ID == _S.Key.ID)
+                                                {
+                                                    old_amount = _S.Value;
+                                                }
+                                                
+                                            }
+
+                                            DataControl.Instance.UpdateStockInDepot(_DD, new KeyValuePair<Stock, uint>(_s, old_amount), (int)_o.amount);
+                                            DataControl.Instance.SaveIssuedOrderToDepot(_DD, ALLORDERS[i]);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
+                    _DD = DataControl.Instance.GetDepotsByCustomer(CC, GetAllOrders())[(int)DID];
 
 
-
-
-
-
-
-                    foreach (KeyValuePair<Stock, uint> _S in _DD.Stocks)
+                    if (_DD.Stocks.Count > 0)
                     {
-                        Console.WriteLine("             " + _S.Key.ID + " (" + _S.Value.ToString() + ")");
+                        Console.WriteLine("The following Stocks remain in the Depot: ");
+                        uint stockcounter = 0;
+                        foreach (KeyValuePair<Stock, uint> _S in _DD.Stocks)
+                        {
+                            Console.WriteLine("Stock Nr.: "+stockcounter++);
+                            Console.WriteLine("             " + _S.Key.ID + " (" + _S.Value.ToString() + ")");
+                        }
+                        Console.WriteLine("Please enter the Stock Nr. (0-" + (--stockcounter) + "): ");
+                        string SID_str = Console.ReadLine();
+
+                        uint SID = 0;
+
+
+
+                        while ((!uint.TryParse(SID_str, out SID)) || (SID < 0) || (SID > stockcounter))
+                        {
+                            Console.WriteLine("Please enter the Stock Nr. (0-" + (stockcounter) + "): ");
+                            SID_str = Console.ReadLine();
+
+                        }
+                        SID = uint.Parse(SID_str);
+                        Stock[] _ALLSTOCKS = GetAllStocks();
+                        double curr_price = 0d;
+                        foreach(Stock _S in _ALLSTOCKS)
+                        {
+                            if(_S.ID == _DD.Stocks[(int)SID].Key.ID)
+                            {
+                                curr_price = _S.Price;
+                                _DD.Stocks[(int)SID].Key.Price = curr_price;
+                            }
+                        }
+
+
+
+
+
+
+                        Console.WriteLine("Chosen Stock: ");
+                        Console.WriteLine("--------------------------------------");
+                        Console.WriteLine("Stock Nr.: " + SID);
+                        Console.WriteLine("             " + _DD.Stocks[(int)SID].Key.ID + " (" + _DD.Stocks[(int)SID].Value.ToString() + ")");
+                        Console.WriteLine("--------------------------------------");
+
+
+                        Console.WriteLine("Please enter the amount of Stocks you would like to SELL (max." + _DD.Stocks[(int)SID].Value + "): ");
+                        string amt_str = Console.ReadLine();
+
+                        uint amt = 0;
+
+
+
+                        while ((!uint.TryParse(amt_str, out amt)) || (amt < 1) || (amt > _DD.Stocks[(int)SID].Value))
+                        {
+                            Console.WriteLine("Please enter the amount of Stocks you would like to SELL (max." + _DD.Stocks[(int)SID].Value + "): ");
+                            amt_str = Console.ReadLine();
+
+                        }
+                        amt = uint.Parse(amt_str);
+
+
+                        Console.WriteLine("Please enter the price  you would like to SELL the stocks for (current: " + curr_price + "): ");
+                        string prc_str = Console.ReadLine();
+
+                        double prc = 0;
+
+
+
+                        while ((!double.TryParse(prc_str, out prc)) || (prc < 0))
+                        {
+
+                            Console.WriteLine("Please enter the price  you would like to SELL the stocks for (current: " + curr_price + "): ");
+                            prc_str = Console.ReadLine();
+
+                        }
+                        prc = double.Parse(prc_str);
+
+
+                        string WannaSellStock = "";
+                        while ((WannaSellStock != "yes") && (WannaSellStock != "no"))
+                        {
+                            Console.WriteLine("Send Order TO SELL Stock " + _DD.Stocks[(int)SID].Key.ID + " with the amount of " + amt + " for the price of " + prc + "?");
+                            WannaSellStock = Console.ReadLine();
+                        }
+
+                        if (WannaSellStock == "yes")
+                        {
+                            Order SellOrder = new Order();
+                            SellOrder.timestamp = DateTimeOffset.Now;
+                            SellOrder.idBoerse = "datBoerse";
+                            SellOrder.idBank = "dieBank";
+                            SellOrder.idStock = _DD.Stocks[(int)SID].Key.ID;
+                            SellOrder.price = prc;
+                            SellOrder.amount = amt;
+                            SellOrder.type = "sell";
+                            SellOrder.idCustomer = CC.ID;
+
+                            SellOrder = JsonConvert.DeserializeObject<Order>(SendOrder(SellOrder));
+                            _DD.AddSellOrder(SellOrder);
+
+                            Console.WriteLine("Order has been sent!");
+
+                            continue;
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
-                    
-                    if(_DD.Stocks.Count <=0)
+
+                    if (_DD.Stocks.Count <= 0)
                     {
                         Console.WriteLine("No Stocks found in Depot - Loading available Stocks from Boerse...");
                         Order[] Orders = GetAllOrders();
-                      
                         uint sellordercounter = 0;
-                        for(int i = 0; i<Orders.Length;i++)
+                        for (int i = 0; i < Orders.Length; i++)
                         {
-                            
+
                             if (Orders[i].type == "sell")
                             {
                                 sellordercounter++;
@@ -191,18 +314,18 @@ namespace BoerseClient
                         foreach (Order od in SellOrders)
                         {
 
-                                Console.WriteLine("+++++++++++++++++++++++++++++++++++++++");
-                                Console.WriteLine("Order Nr.: " + ordercounter++);
-                                Console.WriteLine("ID: " + od.id);
-                                Console.WriteLine("Time: " + od.timestamp);
-                                Console.WriteLine("Type: " + od.type);
-                                Console.WriteLine("Boerse: " + od.idBoerse);
-                                Console.WriteLine("Customer: " + od.idCustomer);
-                                Console.WriteLine("Stock: " + od.idStock);
-                                Console.WriteLine("Amount: " + od.amount);
-                                Console.WriteLine("Price: " + od.price);
-                                Console.WriteLine("+++++++++++++++++++++++++++++++++++++++");
-                            
+                            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++");
+                            Console.WriteLine("Order Nr.: " + ordercounter++);
+                            Console.WriteLine("ID: " + od.id);
+                            Console.WriteLine("Time: " + od.timestamp);
+                            Console.WriteLine("Type: " + od.type);
+                            Console.WriteLine("Boerse: " + od.idBoerse);
+                            Console.WriteLine("Customer: " + od.idCustomer);
+                            Console.WriteLine("Stock: " + od.idStock);
+                            Console.WriteLine("Amount: " + od.amount);
+                            Console.WriteLine("Price: " + od.price);
+                            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++");
+
 
                         }
                         Console.WriteLine("Please enter the Order Nr. (0-" + (--ordercounter) + "): ");
@@ -232,7 +355,7 @@ namespace BoerseClient
                         Console.WriteLine("Price: " + OO.price);
 
 
-                        Console.WriteLine("Please enter the amount of Stocks you would like to buy (max."+OO.amount+"): ");
+                        Console.WriteLine("Please enter the amount of Stocks you would like to buy (max." + OO.amount + "): ");
                         string amt_str = Console.ReadLine();
 
                         uint amt = 0;
@@ -255,11 +378,11 @@ namespace BoerseClient
 
 
 
-                        while ((!double.TryParse(prc_str, out prc)) || (prc <0) )
+                        while ((!double.TryParse(prc_str, out prc)) || (prc < 0))
                         {
 
                             Console.WriteLine("Please enter the price  you would like to buy the stocks for (current: " + OO.price + "): ");
-                             prc_str = Console.ReadLine();
+                            prc_str = Console.ReadLine();
 
                         }
                         prc = double.Parse(prc_str);
@@ -268,7 +391,7 @@ namespace BoerseClient
                         string DoSendOrder = "";
                         while ((DoSendOrder != "yes") && (DoSendOrder != "no"))
                         {
-                            Console.WriteLine("Send Order for Stock "+OO.idStock+" with the amount of "+amt+" for the price of "+prc+"?");
+                            Console.WriteLine("Send Order for Stock " + OO.idStock + " with the amount of " + amt + " for the price of " + prc + "?");
                             DoSendOrder = Console.ReadLine();
                         }
 
@@ -286,6 +409,7 @@ namespace BoerseClient
 
                             BuyOrder = JsonConvert.DeserializeObject<Order>(SendOrder(BuyOrder));
                             _DD.AddSellOrder(BuyOrder);
+
                             Console.WriteLine("Order has been sent!");
 
                             continue;
@@ -298,18 +422,19 @@ namespace BoerseClient
 
 
                     }
+                    
                 }
                 else
                 {
                     Console.WriteLine(CC.FirstName + " " + CC.LastName + " has no Depots");
                     string CreateDepot = "";
-                    while((CreateDepot != "yes")&& (CreateDepot != "no"))
+                    while ((CreateDepot != "yes") && (CreateDepot != "no"))
                     {
                         Console.WriteLine("Create Depot? Enter yes or no: ");
                         CreateDepot = Console.ReadLine();
                     }
 
-                    if(CreateDepot=="yes")
+                    if (CreateDepot == "yes")
                     {
                         new Depot(CC);
                         continue;
@@ -403,6 +528,7 @@ namespace BoerseClient
             //SendOrder(OD);
 
         }
+    
 
         // Returns JSON string
         static string GET(string url)
