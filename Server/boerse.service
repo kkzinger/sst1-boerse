@@ -1,0 +1,10 @@
+[Unit]
+Description=uWSGI instance to serve boerse server application
+After=network.target
+
+[Service]
+ExecStartPre=-/usr/bin/bash -c 'mkdir -p /run/uwsgi; chown flask:nginx /run/uwsgi;' 
+ExecStart=/bin/bash -c 'cd /opt/sst1-boerse/Server; source venv/bin/activate; export AWS_ACCESS_KEY_ID=AKIAIGJTGTHHQPXBESQA; export AWS_SECRET_ACCESS_KEY=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; uwsgi --ini boerse.ini'
+
+[Install]
+WantedBy=multi-user.target
